@@ -17,10 +17,10 @@ const putInCache = async (request, response) => {
 
 const cacheFirst = async ({ request, fallbackUrl }) => {
   // First try to get the resource from the cache
-  const responseFromCache = await caches.match(request);
-  if (responseFromCache) {
-    return responseFromCache;
-  }
+  // const responseFromCache = await caches.match(request);
+  // if (responseFromCache) {
+  //   return responseFromCache;
+  // }
 
   // Next try to get the resource from the network
   try {
@@ -28,7 +28,7 @@ const cacheFirst = async ({ request, fallbackUrl }) => {
     // response may be used only once
     // we need to save clone to put one copy in cache
     // and serve second one
-    putInCache(request, responseFromNetwork.clone());
+    // putInCache(request, responseFromNetwork.clone());
     return responseFromNetwork;
   } catch (error) {
     const fallbackResponse = await caches.match(fallbackUrl);
