@@ -29,16 +29,6 @@ app.get("/video/download", async (req, res) => {
   res.header("Content-Length", format.contentLength);
   res.header("Content-Type", format.mimeType.split(";")[0]);
 
-  const now = Date.now()
-  const stream = ytdl.downloadFromInfo(info, { format });
-
-  stream.on("progress", (chunkLength, downloaded, total) => {
-    const percent = downloaded / total;
-    const timeDiff = (Date.now() - now) / 1000
-    console.log("downloading", `${(percent * 100).toFixed(1)}% - ${timeDiff}s`);
-  });
-
-  stream.pipe(res);
   ytdl.downloadFromInfo(info, { format }).pipe(res);
 });
 
