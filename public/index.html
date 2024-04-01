@@ -9,27 +9,21 @@
     <title>V-Loader</title>
   </head>
   <body>
-    <nav style="display: flex; justify-content: space-between">
-      <h1>V-Loader</h1>
+    <nav>
       <img src="images/icons/icon-128.png" alt="logo" />
+      <span>V-Loader</span>
     </nav>
 
-    <!-- just a random button to have something interactive -->
-    <div class="output">
-      <button class="btn">Click me updated</button>
-      <span>0</span>
-      <br />
-      <br />
-      <br />
-    </div>
+    <main>
+      <form name="video-form" method="get" action="">
+        <input type="url" name="url" id="url" />
 
-    <div class="url-params"></div>
+        <input type="submit" value="Get Info" />
+        <span class="error"></span>
+      </form>
 
-    <form action="">
-      <input type="url" name="url" id="url" />
-
-      <input type="submit" value="Download" />
-    </form>
+      <div class="video-details"></div>
+    </main>
 
     <script src="javascript/index.js"></script>
   </body>
