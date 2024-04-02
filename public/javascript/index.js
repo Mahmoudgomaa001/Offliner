@@ -38,6 +38,7 @@ async function handleFormSubmit(event) {
 
 function renderVideoDetails(details) {
   detailsContainer.innerHTML = "";
+  videoForm.querySelector(".error").innerHTML = "";
 
   renderVideoThumbnail(details);
   // renderVideoFormats(details);
@@ -48,7 +49,7 @@ function renderVideoThumbnail({ videoDetails }) {
   const template = `
     <img src=${thumbnails[0].url}>
     <p>${title}</p>
-    <a href=/video/download?url=${video_url} download>Download<a/>
+    <a href=/video/download?url=${video_url}>Download<a/>
   `;
 
   const div = document.createElement("div");

@@ -6,7 +6,7 @@ import ytdl from "ytdl-core";
 var app = express();
 
 const __dirname = new URL(".", import.meta.url).pathname;
-const DOWNLOADED_FILENAME = "file";
+const TMP_FILE = "file";
 app.use(express.static(path.join(__dirname, "./public")));
 
 app.get("/video/info", async (req, res) => {
@@ -39,10 +39,13 @@ app.get("/video/download-first", async (req, res) => {
   const { url } = req.query;
 
   const info = await ytdl.getInfo(url);
-  const format = ytdl.chooseFormat(info.formats, { quality: "highest" });
-  const writeStream = fs.createWriteStream(DOWNLOADED_FILENAME);
+  const format = ytdl.chooseFormat(info.formats, {
+    quality: "highestvideo",
+    filter: (f) => f.hasAudio && f.hasVideo,
+  });
+  const writeStream = fs.createWriteStream(TMP_FILE);
+
   res.attachment(info.videoDetails.title.concat(".", format.container));
-  res.header("Content-Length", format.contentLength);
   res.header("Content-Type", format.mimeType.split(";")[0]);
 
   const downloadStream = ytdl.downloadFromInfo(info, { format });
@@ -53,12 +56,20 @@ app.get("/video/download-first", async (req, res) => {
   });
 
   downloadStream.on("end", () => {
-    const readStream = fs.createReadStream(DOWNLOADED_FILENAME);
+    const size = fs.statSync("file").size
+    res.header("Content-Length", size);
+    const readStream = fs.createReadStream(TMP_FILE);
 
     readStream.on("end", () => {
-      fs.unlink(DOWNLOADED_FILENAME, console.log);
+      fs.unlink(TMP_FILE, console.log);
       res.end();
     });
+
+    readStream.on("error", (err) => {
+      console.log(err);
+      fs.unlink(TMP_FILE, console.log);
+    });
+
     readStream.pipe(res);
   });
 });
