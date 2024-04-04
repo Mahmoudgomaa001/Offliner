@@ -36,30 +36,30 @@ app.get("/video/download-first", async (req, res) => {
   const { url } = req.query;
 
   const writeStream = fs.createWriteStream(TMP_FILE);
+  writeStream.on("error", console.error);
 
   const downloadStream = await downloadHighestQualityVideo(url, res);
 
   downloadStream.pipe(writeStream);
-  writeStream.on("error", (err) => {
-    console.log(err);
+
+  downloadStream.on("error", (err) => {
+    console.error(err);
+    res.end();
   });
 
   downloadStream.on("end", () => {
     const size = fs.statSync("file").size;
     res.header("Content-Length", size);
-    const readStream = fs.createReadStream(TMP_FILE);
 
-    readStream.on("end", () => {
-      fs.unlink(TMP_FILE, console.log);
-      res.end();
-    });
+    const deleteTmpFile = () => fs.unlink(TMP_FILE, console.log);
 
-    readStream.on("error", (err) => {
-      console.log(err);
-      fs.unlink(TMP_FILE, console.log);
-    });
-
-    readStream.pipe(res);
+    fs.createReadStream(TMP_FILE)
+      .on("end", deleteTmpFile)
+      .on("error", (err) => {
+        console.log(err);
+        deleteTmpFile();
+      })
+      .pipe(res);
   });
 });
 
