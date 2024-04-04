@@ -46,10 +46,16 @@ function renderVideoDetails(details) {
 
 function renderVideoThumbnail({ videoDetails }) {
   const { thumbnails, title, video_url } = videoDetails;
+  const params = new URLSearchParams(location.search);
+  // this download the whole file on the server before streaming it
+  const downloadFirst = params.has("download-first");
+
   const template = `
     <img src=${thumbnails[0].url}>
     <p>${title}</p>
-    <a href=/video/download?url=${video_url}>Download<a/>
+    <a href=/video/${
+      downloadFirst ? "download-first" : "download"
+    }?url=${video_url}>Download<a/>
   `;
 
   const div = document.createElement("div");
