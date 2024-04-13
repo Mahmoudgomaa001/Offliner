@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import fs from "fs";
 import cp from "child_process";
 import ffmpeg from "ffmpeg-static";
@@ -6,6 +7,7 @@ import path from "path";
 import ytdl from "ytdl-core";
 
 var app = express();
+app.use(cors());
 
 const __dirname = new URL(".", import.meta.url).pathname;
 const TMP_FILE = "file";
