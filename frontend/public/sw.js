@@ -1,8 +1,8 @@
 const cacheVersion = "v2";
 const cacheableResources = [
-  "/",
-  "/javascript/index.js",
-  "/styles/style.css",
+  // "/",
+  // "/javascript/index.js",
+  // "/styles/style.css",
   "images/icons/icon-32.png",
 ];
 
@@ -11,7 +11,8 @@ const addResourcesToCache = async (resources) => {
   await cache.addAll(resources);
 };
 
-const putInCache = async (request, response) => {
+// eslint-disable-next-line no-unused-vars
+const putInCasche = async (request, response) => {
   const cache = await caches.open(cacheVersion);
   await cache.put(request, response);
 };
