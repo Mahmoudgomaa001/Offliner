@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
+import Navbar from "./components/Navbar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [url, setUrl] = useState("https://www.youtube.com/watch?v=r1L35zxZQPE");
+  const [videoDetails, setVideoDetails] = useState(null);
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState(null);
+
+  const getInfo = async (e) => {
+    e?.preventDefault();
+
+    const backendUrl = import.meta.env.VITE_API_BASE;
+    setFetching(true);
+
+    try {
+      const response = await fetch(`${backendUrl}/video/info?url=${url}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setVideoDetails(data);
+      } else {
+        setError(data.error.toString());
+      }
+    } catch (error) {
+      setError(error.message || error.toString());
+    } finally {
+      setFetching(false);
+      setFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+
+    // description comes from being a share_target. it contains the url
+    if (searchParams.has("description")) {
+      setUrl(searchParams.get("description"));
+      getInfo();
+    }
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar />
+
+      <main>
+        <form onSubmit={getInfo}>
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            autoFocus
+          />
+
+          <button onClick={getInfo}>
+            {fetching ? "Fetching..." : "Get Info"}
+          </button>
+          {error && <span className="error">{error}</span>}
+        </form>
+
+        {videoDetails && (
+          <div className="video-details">
+            <pre>{JSON.stringify(videoDetails, null, 2)}</pre>
+          </div>
+        )}
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
