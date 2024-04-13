@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
+import VideoDetailsCard from "./components/VideoDetailsCard";
 
 function App() {
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=r1L35zxZQPE");
@@ -62,7 +63,7 @@ function App() {
 
         {videoDetails && (
           <div className="video-details">
-            <pre>{JSON.stringify(videoDetails, null, 2)}</pre>
+            <VideoDetailsCard videoDetails={videoDetails.videoDetails} />
           </div>
         )}
       </main>

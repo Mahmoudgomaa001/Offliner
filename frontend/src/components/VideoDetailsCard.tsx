@@ -1,4 +1,4 @@
-export default function VideoCardDetails({ videoDetails }) {
+export default function VideoDetailsCard({ videoDetails }) {
   const { thumbnails, title, video_url } = videoDetails;
   const imgUrl = thumbnails[0].url;
   const backendUrl = import.meta.env.VITE_API_BASE;
@@ -10,12 +10,14 @@ export default function VideoCardDetails({ videoDetails }) {
   return (
     <div>
       <img src={imgUrl} alt={title} />
-      <h3>{title}</h3>
+      <p className="text-3xl font-bold underline">{title}</p>
       <a
         href={`${backendUrl}/video/${
           downloadFirst ? "download-first" : "download"
         }?url=${video_url}`}
-      ></a>
+      >
+        Download
+      </a>
     </div>
   );
 }
