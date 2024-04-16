@@ -56,9 +56,9 @@ self.addEventListener("fetch", (event) => {
     console.log("SHARING TARGET WORKING 1/2");
   }
 
-  event.respondWith(
-    cacheFirst({
-      request: event.request,
-    })
-  );
+  // event.respondWith(
+  //   cacheFirst({
+  //     request: event.request,
+  //   })
+  // );
 });

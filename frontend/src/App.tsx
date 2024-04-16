@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import VideoDetailsCard from '@/components/VideoDetailsCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Toaster } from '@/components/ui/toaster'
 
 function App() {
   const [url, setUrl] = useState('https://www.youtube.com/watch?v=r1L35zxZQPE')
@@ -24,13 +25,13 @@ function App() {
 
       if (response.ok) {
         setVideoDetails(data)
+        setError(null)
       } else {
         setError(data.error.toString())
       }
     } catch (error) {
       setError((error as Error).message)
     } finally {
-      setFetching(false)
       setFetching(false)
     }
   }
@@ -51,22 +52,26 @@ function App() {
       <Navbar />
 
       <main>
-        <form onSubmit={getInfo} className="flex gap-4 mb-8">
-          <Input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            autoFocus
-          />
+        <form onSubmit={getInfo} className="mb-8">
+          <div className="flex gap-4">
+            <Input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              autoFocus
+            />
 
-          <Button variant="outline">
-            {fetching ? (
-              <Loader size={20} className="animate-spin" />
-            ) : (
-              <Search size={20} />
-            )}
-          </Button>
-          {error && <span className="error">{error}</span>}
+            <Button variant="outline">
+              {fetching ? (
+                <Loader size={20} className="animate-spin" />
+              ) : (
+                <Search size={20} />
+              )}
+            </Button>
+          </div>
+          {error && (
+            <span className="text-red-400 font-semibold text-sm">{error}</span>
+          )}
         </form>
 
         {videoDetails && (
@@ -75,6 +80,8 @@ function App() {
           </div>
         )}
       </main>
+
+      <Toaster />
     </>
   )
 }
