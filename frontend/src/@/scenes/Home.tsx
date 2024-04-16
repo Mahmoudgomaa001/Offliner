@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Toaster } from '@/components/ui/toaster'
 
-function App() {
+function Home() {
   const [url, setUrl] = useState('https://www.youtube.com/watch?v=r1L35zxZQPE')
   const [videoDetails, setVideoDetails] = useState<videoInfo>()
   const [fetching, setFetching] = useState<boolean>(false)
@@ -86,4 +86,4 @@ function App() {
   )
 }
 
-export default App
+export default Home
