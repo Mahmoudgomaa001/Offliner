@@ -71,6 +71,9 @@
     @apply border-border;
   }
   body {
+    font-family: arial;
+    max-width: 700px;
+    margin: 0 auto;
     @apply bg-background text-foreground;
   }
 }
