@@ -32,9 +32,9 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
     await response.body
       .pipeTo(fileWriteStream)
       .catch(console.error)
-      .finally(() => {
+      .finally(async () => {
         setFetching(false)
-        set(videoId, videoDetails)
+        await set(videoId, videoDetails)
         toast({
           title: `"${title}" Has been downloaded`,
           action: (
