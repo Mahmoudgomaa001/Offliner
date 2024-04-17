@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { MoreVideoDetails } from 'ytdl-core'
 import { Download, Loader } from 'lucide-react'
 
-import { FileSystemManager } from '@/lib/FileSystemManager'
+import { createWriteStream } from '@/lib/FileSystemManager'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { formatSeconds } from '@/lib/utils'
+import { set } from '@/lib/videoStore'
 
 type Props = {
   videoDetails: MoreVideoDetails
@@ -17,10 +18,8 @@ export default function VideoDetailsCard({ videoDetails }: Props) {
 
   async function downloadVideoStream() {
     const backendUrl = import.meta.env.VITE_API_BASE
-    const fs = new FileSystemManager()
-    const fileName = `${title}.mp4`
 
-    const fileWriteStream = await fs.createWriteStream(fileName)
+    const fileWriteStream = await createWriteStream(videoDetails.videoId)
 
     setFetching(true)
     const response = await fetch(
@@ -32,8 +31,9 @@ export default function VideoDetailsCard({ videoDetails }: Props) {
       .catch(console.error)
       .finally(() => {
         setFetching(false)
+        set(videoDetails.videoId, videoDetails)
         toast({
-          title: `${fileName} Has been downloaded`,
+          title: `"${title}" Has been downloaded`,
           description: 'You can watch it now',
         })
       })
