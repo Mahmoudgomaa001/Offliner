@@ -37,15 +37,8 @@ export async function getAllVideos() {
   return videos
 }
 
-/**
-const video = document.querySelector('video')
-video.setAttribute('controls', true)
-video.setAttribute('autoplay', true)
+export async function getVideo(videoId: string) {
+  const videos = await getAllVideos()
 
-const files = await getAllFiles()
-
-const file = await file[0].fileHandle.getFile()
-video.src = URL.createObjectURL(file)
-URL.revokeObjectURL(file)
-
- */
+  return videos.find((v) => v.videoId === videoId)
+}

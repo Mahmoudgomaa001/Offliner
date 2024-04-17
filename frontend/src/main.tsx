@@ -7,6 +7,7 @@ import Home from '@/scenes/Home'
 
 import './index.css'
 import Layout from './Layout'
+import VideoPlayer from '@/scenes/VideoPlayer'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: '/videos',
         Component: Videos,
+      },
+      {
+        path: '/videos/:videoId',
+        Component: VideoPlayer,
       },
     ],
   },

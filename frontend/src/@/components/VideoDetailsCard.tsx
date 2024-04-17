@@ -48,7 +48,7 @@ export default function VideoDetailsCard({ videoDetails }: Props) {
         height={90}
         width={160}
       />
-      <div>
+      <div className='flex-grow'>
         <p className="text-lg font-semibold line-clamp-2">{title}</p>
         <p>Duration: {formatSeconds(+lengthSeconds)}</p>
       </div>

@@ -13,7 +13,7 @@ export default function VideoCard({ videoInfo }: Props) {
           alt="Video thumbnail"
           className="aspect-video overflow-hidden rounded-lg object-cover w-full"
           height={225}
-          src={videoInfo.thumbnails[0].url}
+          src={bestThumbnail(videoInfo.thumbnails).url}
           width={400}
         />
         <span className="sr-only">Watch video</span>
@@ -33,4 +33,10 @@ export default function VideoCard({ videoInfo }: Props) {
       </div>
     </div>
   )
+}
+
+function bestThumbnail(thumbnails) {
+  console.log(thumbnails.sort((a, b) => a.width > b.width));
+  
+  return thumbnails.sort((a, b) => a.width > b.width).at(-1)
 }
