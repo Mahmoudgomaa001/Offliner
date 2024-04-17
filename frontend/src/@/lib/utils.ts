@@ -12,3 +12,9 @@ export function formatSeconds(seconds: number) {
 
   return timeString
 }
+
+export function formatNumber(number: number) {
+  let formatter = Intl.NumberFormat('en', { notation: 'compact' })
+
+  return formatter.format(number)
+}
