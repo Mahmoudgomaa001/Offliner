@@ -11,7 +11,7 @@ import { set } from '@/lib/videoStore'
 type Props = {
   videoDetails: MoreVideoDetails
 }
-export default function VideoDetailsCard({ videoDetails }: Props) {
+export default function VideoDownloadCard({ videoDetails }: Props) {
   const { toast } = useToast()
   const [fetching, setFetching] = useState(false)
   const { thumbnails, title, video_url, lengthSeconds } = videoDetails
@@ -48,7 +48,7 @@ export default function VideoDetailsCard({ videoDetails }: Props) {
         height={90}
         width={160}
       />
-      <div className='flex-grow'>
+      <div className="flex-grow">
         <p className="text-lg font-semibold line-clamp-2">{title}</p>
         <p>Duration: {formatSeconds(+lengthSeconds)}</p>
       </div>

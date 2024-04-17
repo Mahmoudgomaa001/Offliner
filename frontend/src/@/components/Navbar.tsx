@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="flex items-center justify-between mt-3 mb-10 mx-auto max-w-[700px]">
       <Link to="/" className="flex items-center gap-4">
         <img
-          src="images/icons/icon-128.png"
+          src="/images/icons/icon-128.png"
           alt="logo"
           width={40}
           height={40}

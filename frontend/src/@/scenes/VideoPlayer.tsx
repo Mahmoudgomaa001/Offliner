@@ -1,4 +1,6 @@
+import AuthorCard from '@/components/AuthorCard'
 import { getVideo, localVideoDetails } from '@/lib/FileSystemManager'
+import { formatNumber } from '@/lib/utils'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -12,7 +14,7 @@ export default function VideoPlayer() {
   }, [])
 
   useEffect(() => {
-    if (!videoRef.current) return
+    if (!videoRef.current || !videoDetails) return
 
     const src = URL.createObjectURL(videoDetails.file)
 
@@ -24,8 +26,17 @@ export default function VideoPlayer() {
   if (!videoDetails) return <p>Video Not Found</p>
 
   return (
-    <main className="mx-8">
-      <video controls autoPlay ref={videoRef}></video>
+    <main className="px-4 w-full md:mx-auto md:w-4/5">
+      <video className="w-full" controls ref={videoRef} autoPlay></video>
+
+      <div className="flex justify-between items-center mb-3">
+        <h1 className="text-xl mt-3">{videoDetails.title}</h1>
+        <div>
+          <b>{formatNumber(+videoDetails.viewCount)}</b> views
+        </div>
+      </div>
+
+      <AuthorCard author={videoDetails.author} />
     </main>
   )
 }

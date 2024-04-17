@@ -36,7 +36,5 @@ export default function VideoCard({ videoInfo }: Props) {
 }
 
 function bestThumbnail(thumbnails) {
-  console.log(thumbnails.sort((a, b) => a.width > b.width));
-  
   return thumbnails.sort((a, b) => a.width > b.width).at(-1)
 }

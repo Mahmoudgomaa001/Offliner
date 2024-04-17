@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Loader, Search } from 'lucide-react'
 import { videoInfo } from 'ytdl-core'
-import VideoDetailsCard from '@/components/VideoDetailsCard'
+import VideoDownloadCard from '@/components/VideoDownloadCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -70,7 +70,7 @@ function Home() {
       </form>
 
       {videoDetails && (
-        <VideoDetailsCard videoDetails={videoDetails.videoDetails} />
+        <VideoDownloadCard videoDetails={videoDetails.videoDetails} />
       )}
     </main>
   )
