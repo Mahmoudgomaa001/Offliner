@@ -4,22 +4,25 @@ import { Download, Loader } from 'lucide-react'
 
 import { createWriteStream } from '@/lib/FileSystemManager'
 import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { formatSeconds } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {
   videoDetails: MoreVideoDetails
 }
 export default function VideoDownloadCard({ videoDetails }: Props) {
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [fetching, setFetching] = useState(false)
-  const { thumbnails, title, video_url, lengthSeconds } = videoDetails
+  const { thumbnails, title, video_url, lengthSeconds, videoId } = videoDetails
 
   async function downloadVideoStream() {
     const backendUrl = import.meta.env.VITE_API_BASE
 
-    const fileWriteStream = await createWriteStream(videoDetails.videoId)
+    const fileWriteStream = await createWriteStream(videoId)
 
     setFetching(true)
     const response = await fetch(
@@ -31,10 +34,19 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
       .catch(console.error)
       .finally(() => {
         setFetching(false)
-        set(videoDetails.videoId, videoDetails)
+        set(videoId, videoDetails)
         toast({
           title: `"${title}" Has been downloaded`,
-          description: 'You can watch it now',
+          action: (
+            <ToastAction
+              altText="Play video"
+              onClick={() => {
+                navigate(`/videos/${videoId}`)
+              }}
+            >
+              Play
+            </ToastAction>
+          ),
         })
       })
   }
