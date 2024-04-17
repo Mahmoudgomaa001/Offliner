@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Loader, Search } from 'lucide-react'
 import { videoInfo } from 'ytdl-core'
-import Navbar from '@/components/Navbar'
 import VideoDetailsCard from '@/components/VideoDetailsCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Toaster } from '@/components/ui/toaster'
 
 function Home() {
   const [url, setUrl] = useState('https://www.youtube.com/watch?v=r1L35zxZQPE')
@@ -48,41 +46,33 @@ function Home() {
   }, [])
 
   return (
-    <>
-      <Navbar />
+    <main>
+      <form onSubmit={getInfo} className="mb-8">
+        <div className="flex gap-4">
+          <Input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            autoFocus
+          />
 
-      <main>
-        <form onSubmit={getInfo} className="mb-8">
-          <div className="flex gap-4">
-            <Input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              autoFocus
-            />
-
-            <Button variant="outline">
-              {fetching ? (
-                <Loader size={20} className="animate-spin" />
-              ) : (
-                <Search size={20} />
-              )}
-            </Button>
-          </div>
-          {error && (
-            <span className="text-red-400 font-semibold text-sm">{error}</span>
-          )}
-        </form>
-
-        {videoDetails && (
-          <div className="video-details">
-            <VideoDetailsCard videoDetails={videoDetails.videoDetails} />
-          </div>
+          <Button variant="outline">
+            {fetching ? (
+              <Loader size={20} className="animate-spin" />
+            ) : (
+              <Search size={20} />
+            )}
+          </Button>
+        </div>
+        {error && (
+          <span className="text-red-400 font-semibold text-sm">{error}</span>
         )}
-      </main>
+      </form>
 
-      <Toaster />
-    </>
+      {videoDetails && (
+        <VideoDetailsCard videoDetails={videoDetails.videoDetails} />
+      )}
+    </main>
   )
 }
 
