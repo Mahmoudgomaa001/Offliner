@@ -1,5 +1,5 @@
 import { MoreVideoDetails } from 'ytdl-core'
-import { get } from '@/lib/videoStore'
+import { del, get } from '@/lib/videoStore'
 
 export async function createWriteStream(filename: string) {
   const root = await navigator.storage.getDirectory()
@@ -18,6 +18,7 @@ export async function createWriteStream(filename: string) {
 
 export type localVideoDetails = MoreVideoDetails & {
   file: File
+  downloadedAt: Date
 }
 
 export async function getAllVideos() {
@@ -41,4 +42,21 @@ export async function getVideo(videoId: string) {
   const videos = await getAllVideos()
 
   return videos.find((v) => v.videoId === videoId)
+}
+
+export async function removeVideo(videoId: string) {
+  const root = await navigator.storage.getDirectory()
+  const youtubeFolder = await root.getDirectoryHandle('youtube', {
+    create: true,
+  })
+
+  try {
+    const videoFileHandle = await youtubeFolder.getFileHandle(videoId)
+
+    // @ts-expect-error
+    await videoFileHandle.remove()
+    await del(videoId)
+  } catch (error) {
+    console.log(error)
+  }
 }

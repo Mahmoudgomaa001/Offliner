@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatSeconds(seconds: number) {
+  if (Number.isNaN(seconds)) return null
+
   const date = new Date(0)
   date.setSeconds(seconds)
   const timeString = date.toISOString().substring(11, 19)

@@ -19,6 +19,12 @@ export default function VideoPlayer() {
     })
   }, [videoId])
 
+  function loadVideos() {
+    getAllVideos().then((videos) => {
+      setVideos(videos.filter((v) => v.videoId !== videoId))
+    })
+  }
+
   useEffect(() => {
     if (!videoRef.current || !videoDetails) return
 
@@ -27,7 +33,7 @@ export default function VideoPlayer() {
     videoRef.current.src = src
 
     return () => URL.revokeObjectURL(src)
-  }, [videoRef.current, videoDetails.videoId])
+  }, [videoRef.current, videoDetails?.videoId])
 
   if (!videoDetails) return <p>Video Not Found</p>
 
@@ -48,7 +54,11 @@ export default function VideoPlayer() {
 
       <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {videos.map((video) => (
-          <VideoCard videoInfo={video} key={video.videoId} />
+          <VideoCard
+            videoInfo={video}
+            key={video.videoId}
+            onDelete={loadVideos}
+          />
         ))}
       </div>
     </main>
