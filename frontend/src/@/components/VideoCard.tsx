@@ -16,7 +16,7 @@ export default function VideoCard({ videoInfo, onDelete }: Props) {
           alt="Video thumbnail"
           className="aspect-video overflow-hidden rounded-lg object-cover w-full"
           height={225}
-          src={bestThumbnailUrl(videoInfo.thumbnails)}
+          src={videoInfo.thumbnails.at(-1).url}
           width={400}
         />
         <span className="sr-only">Watch video</span>
@@ -47,10 +47,4 @@ export default function VideoCard({ videoInfo, onDelete }: Props) {
       </Button>
     </div>
   )
-}
-
-function bestThumbnailUrl(thumbnails) {
-  const best = thumbnails?.sort((a, b) => a.width > b.width).at(-1)
-
-  return best ? best.url : null
 }

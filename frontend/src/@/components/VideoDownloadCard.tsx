@@ -57,7 +57,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
   return (
     <div className="flex gap-4">
       <img
-        src={thumbnails[0].url}
+        src={thumbnails.at(-1).url}
         alt={title}
         className="rounded-lg object-cover"
         height={90}
