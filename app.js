@@ -85,7 +85,6 @@ async function downloadHighestQualityVideo(url, res) {
   let audioFormat = ytdl.chooseFormat(info.formats, audioFilter);
   let videoFormat = ytdl.chooseFormat(info.formats, videoFilter);
 
-  res.attachment(`${info.videoDetails.title}.${videoFormat.container}`);
   res.header("Content-Type", videoFormat.mimeType.split(";")[0]);
 
   const audio = ytdl(url, { format: audioFormat });
