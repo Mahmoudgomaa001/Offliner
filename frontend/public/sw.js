@@ -1,64 +1,48 @@
-const cacheVersion = "v2";
+const cacheVersion = 'v2.1'
+const cacheableHosts = ['i.ytimg.com']
 const cacheableResources = [
-  // "/",
+  '/',
   // "/javascript/index.js",
   // "/styles/style.css",
-  "images/icons/icon-32.png",
-];
+  '/images/icons/icon-16.png',
+  '/images/icons/icon-32.png',
+  '/images/icons/icon-64.png',
+  '/images/icons/icon-128.png',
+  '/images/icons/icon-256.png',
+  '/images/icons/icon-512.png',
+]
 
 const addResourcesToCache = async (resources) => {
-  const cache = await caches.open(cacheVersion);
-  await cache.addAll(resources);
-};
+  const cache = await caches.open(cacheVersion)
+  await cache.addAll(resources)
+}
 
-// eslint-disable-next-line no-unused-vars
-const putInCasche = async (request, response) => {
-  const cache = await caches.open(cacheVersion);
-  await cache.put(request, response);
-};
+const putInCache = async (request, response) => {
+  const cache = await caches.open(cacheVersion)
+  await cache.put(request, response)
+}
 
-const cacheFirst = async ({ request, fallbackUrl }) => {
-  // First try to get the resource from the cache
-  // const responseFromCache = await caches.match(request);
-  // if (responseFromCache) {
-  //   return responseFromCache;
-  // }
-
-  // Next try to get the resource from the network
-  try {
-    const responseFromNetwork = await fetch(request.clone());
-    // response may be used only once
-    // we need to save clone to put one copy in cache
-    // and serve second one
-    // putInCache(request, responseFromNetwork.clone());
-    return responseFromNetwork;
-  } catch (error) {
-    const fallbackResponse = await caches.match(fallbackUrl);
-    if (fallbackResponse) {
-      return fallbackResponse;
-    }
-    // when even the fallback response is not available,
-    // there is nothing we can do, but we must always
-    // return a Response object
-    return new Response("Network error happened", {
-      status: 408,
-      headers: { "Content-Type": "text/plain" },
-    });
-  }
-};
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(addResourcesToCache(cacheableResources));
-});
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.url.includes("/share-endpoint")) {
-    console.log("SHARING TARGET WORKING 1/2");
+const cacheFirst = async (request) => {
+  const responseFromCache = await caches.match(request)
+  if (responseFromCache) {
+    return responseFromCache
   }
 
-  // event.respondWith(
-  //   cacheFirst({
-  //     request: event.request,
-  //   })
-  // );
-});
+  const { hostname } = new URL(request.url)
+  if (cacheableHosts.includes(hostname)) {
+    const responseFromNetwork = await fetch(request.clone())
+
+    putInCache(request, responseFromNetwork.clone())
+    return responseFromNetwork
+  }
+
+  return await fetch(request)
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(addResourcesToCache(cacheableResources))
+})
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(cacheFirst(event.request))
+})
