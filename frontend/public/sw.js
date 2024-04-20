@@ -1,9 +1,8 @@
-const cacheVersion = 'v2.1'
+const cacheVersion = 'v2.2'
 const cacheableHosts = ['i.ytimg.com']
+const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
 const cacheableResources = [
-  '/',
-  // "/javascript/index.js",
-  // "/styles/style.css",
+  '/index.html',
   '/images/icons/icon-16.png',
   '/images/icons/icon-32.png',
   '/images/icons/icon-64.png',
@@ -40,7 +39,9 @@ const cacheFirst = async (request) => {
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(addResourcesToCache(cacheableResources))
+  event.waitUntil(
+    addResourcesToCache(cacheableResources.concat(cacheableDynamicAssets))
+  )
 })
 
 self.addEventListener('fetch', (event) => {
