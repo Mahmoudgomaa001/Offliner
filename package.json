@@ -6,14 +6,17 @@
   "author": "Noureddine Laassari <nlaassari@gmail.com>",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=production node app.js",
+    "dev": "node app.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "ffmpeg-static": "^5.2.0",
     "ytdl-core": "^4.11.5"
   },
-  "scripts": {
-    "start": "NODE_ENV=production node app.js",
-    "dev": "node --watch app.js"
+  "devDependencies": {
+    "vite": "^5.2.10"
   }
 }
