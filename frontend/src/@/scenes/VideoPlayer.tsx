@@ -35,11 +35,11 @@ export default function VideoPlayer() {
     return () => URL.revokeObjectURL(src)
   }, [videoRef.current, videoDetails?.videoId])
 
-  if (!videoDetails) return <p>Video Not Found</p>
+  if (!videoDetails) return <p className='text-center'>Video Not Found</p>
 
   return (
     <main className="px-4 w-full md:mx-auto md:w-4/5">
-      <video className="w-full" controls ref={videoRef}></video>
+      <video className="w-full h-[calc(100vh_-_92px)]" controls ref={videoRef}></video>
 
       <div className="flex justify-between items-center mb-3">
         <h1 className="text-xl mt-3">{videoDetails.title}</h1>
