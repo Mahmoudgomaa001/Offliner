@@ -18,7 +18,7 @@ function Home() {
     setFetching(true)
 
     try {
-      const response = await fetch(`${backendUrl}/video/info?url=${url}`)
+      const response = await fetch(`${backendUrl}/api/video/info?url=${url}`)
       const data = await response.json()
 
       if (response.ok) {

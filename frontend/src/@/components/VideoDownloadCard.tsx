@@ -26,7 +26,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
 
     setFetching(true)
     const response = await fetch(
-      `${backendUrl}/video/download?url=${video_url}`
+      `${backendUrl}/api/video/download?url=${video_url}`
     )
 
     await response.body
