@@ -35,11 +35,16 @@ export default function VideoPlayer() {
     return () => URL.revokeObjectURL(src)
   }, [videoRef.current, videoDetails?.videoId])
 
-  if (!videoDetails) return <p className='text-center'>Video Not Found</p>
+  if (!videoDetails) return <p className="text-center">Video Not Found</p>
 
   return (
     <main className="px-4 w-full md:mx-auto md:w-4/5">
-      <video className="w-full h-[calc(100vh_-_92px)]" controls ref={videoRef}></video>
+      <video
+        className="w-full max-h-[calc(100vh_-_92px)]"
+        controls
+        autoPlay
+        ref={videoRef}
+      ></video>
 
       <div className="flex justify-between items-center mb-3">
         <h1 className="text-xl mt-3">{videoDetails.title}</h1>
@@ -50,7 +55,9 @@ export default function VideoPlayer() {
 
       <AuthorCard author={videoDetails.author} />
 
-      <h2 className="mt-8 mb-3 text-xl font-medium">More Videos</h2>
+      {!!videos.length && (
+        <h2 className="mt-8 mb-3 text-xl font-medium">More Videos</h2>
+      )}
 
       <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {videos.map((video) => (
