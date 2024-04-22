@@ -13,7 +13,7 @@ module.exports = {
     'node_modules',
     '.eslintrc.cjs',
     'postcss.config.js',
-    'app.js',
+    'server.js',
   ],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
