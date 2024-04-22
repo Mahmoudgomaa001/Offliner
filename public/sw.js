@@ -1,4 +1,4 @@
-const cacheVersion = 'v2.2'
+const cacheVersion = 'v.2.3'
 const cacheableHosts = ['i.ytimg.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
 const cacheableResources = [

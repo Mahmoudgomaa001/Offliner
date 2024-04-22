@@ -1,27 +1,22 @@
 import express from 'express'
 import fs from 'fs'
-import cors from 'cors'
-
-import path from 'path'
 
 import VideoRoutes from './backend/routes/video.routes.js'
 
 var app = express()
 const isProd = process.env.NODE_ENV === 'production'
-const indexPath = './frontend/index.html'
+const indexPath = 'index.html'
 const indexProd = isProd ? fs.readFileSync(indexPath, 'utf-8') : ''
-const __dirname = new URL('.', import.meta.url).pathname
+const root = process.cwd()
 
-// app.use(cors())
 // app.use(express.static(path.join(__dirname, './public')))
-
 let vite
 
 if (!isProd) {
   const viteImport = await import('vite')
 
   vite = await viteImport.createServer({
-    root: './frontend',
+    root,
     clearScreen: false,
     logLevel: 'info',
     server: {

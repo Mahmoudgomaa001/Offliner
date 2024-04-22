@@ -14,11 +14,10 @@ function Home() {
   const getInfo = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault()
 
-    const backendUrl = import.meta.env.VITE_API_BASE
     setFetching(true)
 
     try {
-      const response = await fetch(`${backendUrl}/api/video/info?url=${url}`)
+      const response = await fetch(`/api/video/info?url=${url}`)
       const data = await response.json()
 
       if (response.ok) {

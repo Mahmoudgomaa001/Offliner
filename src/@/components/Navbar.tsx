@@ -13,7 +13,7 @@ export default function Navbar() {
         <span>V-Loader</span>
       </Link>
 
-      <div className='flex gap-3'>
+      <div className="flex gap-3">
         <NavLink
           to="/"
           className={({ isActive }) => (isActive ? 'font-semibold' : '')}

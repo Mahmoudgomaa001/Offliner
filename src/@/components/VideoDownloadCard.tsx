@@ -20,13 +20,11 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
   const { thumbnails, title, video_url, lengthSeconds, videoId } = videoDetails
 
   async function downloadVideoStream() {
-    const backendUrl = import.meta.env.VITE_API_BASE
-
     const fileWriteStream = await createWriteStream(videoId)
 
     setFetching(true)
     const response = await fetch(
-      `${backendUrl}/api/video/download?url=${video_url}`
+      `/api/video/download?url=${video_url}`
     )
 
     await response.body
