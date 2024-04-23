@@ -6,9 +6,11 @@ import Navbar from '@/components/Navbar'
 export default function App() {
   return (
     <>
-      <Navbar />
+      <Navbar className="px-4 md:px-0" />
 
-      <Outlet />
+      <div className="px-4">
+        <Outlet />
+      </div>
 
       <Toaster />
     </>

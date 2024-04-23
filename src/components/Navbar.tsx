@@ -1,8 +1,18 @@
+import { cn } from '@/lib/utils'
 import { NavLink, Link } from 'react-router-dom'
 
-export default function Navbar() {
+type Props = {
+  className?: string
+}
+
+export default function Navbar({ className }: Props) {
   return (
-    <nav className="flex items-center justify-between mt-3 mb-10 mx-auto max-w-[700px]">
+    <nav
+      className={cn(
+        'flex items-center justify-between mt-3 mb-10 mx-auto max-w-[700px]',
+        className
+      )}
+    >
       <Link to="/" className="flex items-center gap-4">
         <img
           src="/images/icons/icon-128.png"
