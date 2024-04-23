@@ -52,7 +52,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
 
   return (
     <div className="flex gap-4 flex-wrap md:flex-nowrap">
-      <div className="relative w-full">
+      <div className="relative w-full md:w-2/5">
         <img
           src={thumbnails.at(-1).url}
           alt={title}
@@ -63,7 +63,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
         </p>
       </div>
 
-      <div className="flex flex-col justify-between gap-2">
+      <div className="flex flex-col justify-between gap-2 flex-grow">
         <p className="text-lg font-semibold line-clamp-4">{title}</p>
 
         <Button
