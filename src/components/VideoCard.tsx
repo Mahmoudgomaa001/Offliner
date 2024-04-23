@@ -16,7 +16,7 @@ export default function VideoCard({ videoInfo, onDelete }: Props) {
           alt="Video thumbnail"
           className="aspect-video overflow-hidden rounded-lg object-cover w-full"
           height={225}
-          src={videoInfo.thumbnails.at(-1).url}
+          src={videoInfo.thumbnails?.at(-1)?.url}
           width={400}
         />
         <span className="sr-only">Watch video</span>

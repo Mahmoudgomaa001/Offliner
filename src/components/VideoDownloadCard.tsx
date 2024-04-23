@@ -23,9 +23,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
     const fileWriteStream = await createWriteStream(videoId)
 
     setFetching(true)
-    const response = await fetch(
-      `/api/video/download?url=${video_url}`
-    )
+    const response = await fetch(`/api/video/download?url=${video_url}`)
 
     await response.body
       .pipeTo(fileWriteStream)
@@ -65,7 +63,11 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
         <p className="text-lg font-semibold line-clamp-2">{title}</p>
         <p>Duration: {formatSeconds(+lengthSeconds)}</p>
       </div>
-      <Button className="flex gap-2" onClick={downloadVideoStream}>
+      <Button
+        className="flex gap-2"
+        disabled={fetching}
+        onClick={downloadVideoStream}
+      >
         {fetching ? (
           <Loader size={20} className="animate-spin" />
         ) : (
