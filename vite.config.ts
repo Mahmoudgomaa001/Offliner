@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [react({ devTarget: 'esnext' }), addAssetsToSw()],
   resolve: {
     alias: {
-      '@': path.join(__dirname, 'src', '@'),
+      '@': path.join(__dirname, 'src'),
     },
   },
 })
