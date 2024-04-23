@@ -36,6 +36,14 @@ const cacheFirst = async (request) => {
     return responseFromNetwork
   }
 
+  // if requesting /[page].html return index.html so react can handle it
+  if (request.mode === 'navigate') {
+    const req = new Request('/index.html')
+    const responseFromCache = await caches.match(req)
+
+    if (responseFromCache) return responseFromCache
+  }
+
   return await fetch(request)
 }
 
