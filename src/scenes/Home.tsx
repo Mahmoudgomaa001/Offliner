@@ -52,6 +52,9 @@ function Home() {
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            onFocus={(e) => {
+              e.target.select()
+            }}
             autoFocus
           />
 
