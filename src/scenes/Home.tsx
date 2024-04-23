@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 
 function Home() {
   let [searchParams] = useSearchParams()
-  const [url, setUrl] = useState(searchParams.get('description'))
+  const [url, setUrl] = useState(searchParams.get('description') || '')
   const [videoDetails, setVideoDetails] = useState<videoInfo>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)

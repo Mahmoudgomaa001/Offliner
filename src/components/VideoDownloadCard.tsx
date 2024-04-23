@@ -51,30 +51,34 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
   }
 
   return (
-    <div className="flex gap-4">
-      <img
-        src={thumbnails.at(-1).url}
-        alt={title}
-        className="rounded-lg object-cover"
-        height={90}
-        width={160}
-      />
-      <div className="flex-grow">
-        <p className="text-lg font-semibold line-clamp-2">{title}</p>
-        <p>Duration: {formatSeconds(+lengthSeconds)}</p>
+    <div className="flex gap-4 flex-wrap md:flex-nowrap">
+      <div className="relative w-full">
+        <img
+          src={thumbnails.at(-1).url}
+          alt={title}
+          className="rounded-lg object-cover w-full"
+        />
+        <p className="absolute bottom-2 right-2 bg-[#00000099] text-white rounded p-1 leading-none">
+          {formatSeconds(+lengthSeconds)}
+        </p>
       </div>
-      <Button
-        className="flex gap-2"
-        disabled={fetching}
-        onClick={downloadVideoStream}
-      >
-        {fetching ? (
-          <Loader size={20} className="animate-spin" />
-        ) : (
-          <Download />
-        )}
-        Download
-      </Button>
+
+      <div className="flex flex-col justify-between gap-2">
+        <p className="text-lg font-semibold line-clamp-4">{title}</p>
+
+        <Button
+          className="flex gap-2 w-full md:w-auto"
+          disabled={fetching}
+          onClick={downloadVideoStream}
+        >
+          {fetching ? (
+            <Loader size={20} className="animate-spin" />
+          ) : (
+            <Download />
+          )}
+          Download
+        </Button>
+      </div>
     </div>
   )
 }
