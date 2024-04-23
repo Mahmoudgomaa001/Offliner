@@ -1,7 +1,7 @@
 import { X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { localVideoDetails, removeVideo } from '@/lib/FileSystemManager'
-import { formatNumber, formatSeconds } from '@/lib/utils'
+import { formatNumber, formatSeconds, humanFileSize } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 type Props = {
@@ -23,7 +23,7 @@ export default function VideoCard({ videoInfo, onDelete }: Props) {
       </Link>
       <h3 className="text-base font-semibold leading-none">
         <Link className="hover:underline" to="#">
-          {videoInfo.title}
+          {videoInfo.title} ({humanFileSize(videoInfo.file.size)})
         </Link>
       </h3>
       <div className="flex justify-between">
