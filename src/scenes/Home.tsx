@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Loader, Search } from 'lucide-react'
 import { videoInfo } from 'ytdl-core'
@@ -6,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 function Home() {
-  const [url, setUrl] = useState('https://www.youtube.com/watch?v=r1L35zxZQPE')
+  let [searchParams] = useSearchParams()
+  const [url, setUrl] = useState(searchParams.get('description'))
   const [videoDetails, setVideoDetails] = useState<videoInfo>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,12 +36,10 @@ function Home() {
   }
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search)
     // description comes from being a share_target. it contains the url
     const description = searchParams.get('description')
 
     if (description) {
-      setUrl(description)
       getInfo()
     }
   }, [])
