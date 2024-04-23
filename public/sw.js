@@ -1,4 +1,5 @@
-const cacheVersion = 'v.2.7'
+const cacheVersion = 1
+const cacheName = `cache-v${cacheVersion}`
 const cacheableHosts = ['i.ytimg.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
 const cacheableResources = [
@@ -12,12 +13,12 @@ const cacheableResources = [
 ]
 
 const addResourcesToCache = async (resources) => {
-  const cache = await caches.open(cacheVersion)
+  const cache = await caches.open(cacheName)
   await cache.addAll(resources)
 }
 
 const putInCache = async (request, response) => {
-  const cache = await caches.open(cacheVersion)
+  const cache = await caches.open(cacheName)
   await cache.put(request, response)
 }
 
@@ -53,7 +54,7 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const keys = await caches.keys()
       return keys.map(async (cache) => {
-        if (cache !== cacheVersion) {
+        if (cache !== cacheName) {
           return await caches.delete(cache)
         }
       })
