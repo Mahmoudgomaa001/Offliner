@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MoreVideoDetails } from 'ytdl-core'
 import { Download, Loader } from 'lucide-react'
 
@@ -17,7 +17,12 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
   const { toast } = useToast()
   const navigate = useNavigate()
   const [fetching, setFetching] = useState(false)
+  const [percentFetched, setPercentFetched] = useState(0)
   const { thumbnails, title, video_url, lengthSeconds, videoId } = videoDetails
+
+  useEffect(() => {
+    setPercentFetched(0)
+  }, [videoDetails.videoId])
 
   async function downloadVideoStream() {
     const fileWriteStream = await createWriteStream(videoId)
@@ -25,8 +30,24 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
     setFetching(true)
     try {
       const response = await fetch(`/api/video/download?url=${video_url}`)
+      let bytesLengthReceived = 0
+      const contentLength = +response.headers.get('Content-Length')
 
-      await response.body.pipeTo(fileWriteStream).then(async () => {
+      const [stream1, stream2] = response.body.tee()
+
+      const reader = stream2.getReader()
+      reader.read().then(function processText({ done, value }) {
+        if (done) return
+
+        bytesLengthReceived += value.byteLength
+        setPercentFetched(
+          Math.round((bytesLengthReceived * 100) / contentLength)
+        )
+
+        return reader.read().then(processText)
+      })
+
+      stream1.pipeTo(fileWriteStream).then(async () => {
         await set(videoId, { ...videoDetails, downloadedAt: new Date() })
 
         toast({
@@ -82,7 +103,7 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
           ) : (
             <Download />
           )}
-          Download
+          Download {!!percentFetched && <span>{percentFetched}%</span>}
         </Button>
       </div>
     </div>
