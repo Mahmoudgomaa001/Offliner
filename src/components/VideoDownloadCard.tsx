@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { MoreVideoDetails } from 'ytdl-core'
 import { Download, Loader } from 'lucide-react'
 
-import { createWriteStream } from '@/lib/FileSystemManager'
+import { createWriteStream, removeVideo } from '@/lib/FileSystemManager'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
@@ -23,11 +23,10 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
     const fileWriteStream = await createWriteStream(videoId)
 
     setFetching(true)
-    const response = await fetch(`/api/video/download?url=${video_url}`)
+    try {
+      const response = await fetch(`/api/video/download?url=${video_url}`)
 
-    await response.body
-      .pipeTo(fileWriteStream)
-      .then(async () => {
+      await response.body.pipeTo(fileWriteStream).then(async () => {
         await set(videoId, { ...videoDetails, downloadedAt: new Date() })
 
         toast({
@@ -44,10 +43,17 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
           ),
         })
       })
-      .catch(console.error)
-      .finally(async () => {
-        setFetching(false)
+    } catch (error) {
+      await fileWriteStream.close()
+      await removeVideo(videoId)
+
+      toast({
+        title: 'An error occurred',
+        description: error.message || error.toString(),
       })
+    } finally {
+      setFetching(false)
+    }
   }
 
   return (
