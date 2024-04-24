@@ -2,33 +2,55 @@ import cp from 'child_process'
 import ffmpeg from 'ffmpeg-static'
 import ytdl from 'ytdl-core'
 
+export const QUALITY_ITAG_MAP_1080p = {
+  webm: {
+    audio: [251],
+    video: [248],
+  },
+  mp4: {
+    audio: [140, 141],
+    video: [137, 399],
+  },
+}
+
 export async function downloadHighestQualityVideo(url, res) {
-  const videoFilter = {
-    filter: 'videoonly',
-    quality: 'highestvideo',
-    filter: (f) => f.container === 'mp4',
-  }
-  const audioFilter = {
-    filter: 'audioonly',
-    quality: 'highestaudio',
-    filter: (f) => f.container === 'mp4' && !f.hasVideo,
-  }
-
   const info = await ytdl.getInfo(url)
-  let audioFormat = ytdl.chooseFormat(info.formats, audioFilter)
-  let videoFormat = ytdl.chooseFormat(info.formats, videoFilter)
 
-  res.header('Content-Type', videoFormat.mimeType.split(';')[0])
+  const has1080 =
+    info.formats.findIndex(
+      (f) => f.qualityLabel === '1080p' || f.quality === 'hd1080'
+    ) > -1
+
+  if (!has1080) return downloadLowQualityVideo(info, url, res)
+
+  const selectedFormats = selectFormat(info.formats)
+
+  if (!selectedFormats) return downloadLowQualityVideo(info, url, res)
+
+  const { audioFormat, videoFormat } = selectedFormats
+
+  const contentType =
+    videoFormat.container === 'webm' ? 'video/webm' : 'video/x-matroska'
+
+  res.header('Content-Type', contentType)
+  res.header(
+    'Content-Length',
+    +audioFormat.contentLength + +videoFormat.contentLength
+  )
 
   const audio = ytdl(url, { format: audioFormat })
   const video = ytdl(url, { format: videoFormat })
 
-  const mergeStream = mergeAudioAndVideo(audio, video)
+  const mergeStream = mergeAudioAndVideo(audio, video, videoFormat.container)
 
   return mergeStream
 }
 
-export function mergeAudioAndVideo(audioStream, videoStream) {
+export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
+  // mp4 requires re-encoding the audio which breaks the content-lenght
+  // so we keep it webm or use mkv as a container
+  // maybe we should just use mkv all the time?
+  const outFormat = outputContainer === 'webm' ? 'webm' : 'matroska'
   const ffmpegProcess = cp.spawn(
     ffmpeg,
     [
@@ -45,11 +67,9 @@ export function mergeAudioAndVideo(audioStream, videoStream) {
 
       // Keep video encoding. encode audio as flac
       ['-c:v', 'copy'],
-      ['-c:a', 'flac'],
+      ['-c:a', 'copy'],
 
-      ['-movflags', 'isml+frag_keyframe'],
-
-      ['-f', 'mp4', 'pipe:5'],
+      ['-f', outFormat, 'pipe:5'],
     ].flat(),
     {
       windowsHide: true,
@@ -69,5 +89,39 @@ export function mergeAudioAndVideo(audioStream, videoStream) {
   audioStream.pipe(ffmpegProcess.stdio[3])
   videoStream.pipe(ffmpegProcess.stdio[4])
 
+  ffmpegProcess.stdio[3].on('error', console.error)
+  ffmpegProcess.stdio[4].on('error', console.error)
+
   return ffmpegProcess.stdio[5]
+}
+
+function downloadLowQualityVideo(info, url, res) {
+  const format = ytdl.chooseFormat(info.formats, { quality: 'highestvideo' })
+
+  res.header('Content-Type', format.mimeType.split(';')[0])
+  res.header('Content-Length', format.contentLength)
+
+  return ytdl(url, { format: format })
+}
+
+function selectFormat(formats = []) {
+  let audioFormat, videoFormat
+  for (const container in QUALITY_ITAG_MAP_1080p) {
+    const { audio, video } = QUALITY_ITAG_MAP_1080p[container]
+    try {
+      audioFormat = formats.find((f) => audio.includes(f.itag))
+      videoFormat = formats.find((f) => video.includes(f.itag))
+
+      break
+    } catch (error) {
+      console.log('error choosing format', error)
+    }
+  }
+
+  if (!audioFormat && !videoFormat) {
+    console.error('No Format found')
+    return null
+  }
+
+  return { audioFormat, videoFormat }
 }

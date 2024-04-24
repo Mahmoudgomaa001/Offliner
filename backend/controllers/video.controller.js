@@ -8,6 +8,8 @@ const TMP_FILE = 'file'
 export const videoInfo = async (req, res) => {
   const { url } = req.query
 
+  if (!url) return res.send({ error: 'url query is required' })
+
   try {
     const info = await ytdl.getInfo(url)
 
@@ -19,6 +21,8 @@ export const videoInfo = async (req, res) => {
 
 export const videoDownload = async (req, res) => {
   const { url } = req.query
+
+  if (!url) return res.send({ error: 'url query is required' })
 
   const stream = await downloadHighestQualityVideo(url, res)
 
