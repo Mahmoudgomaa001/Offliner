@@ -35,7 +35,7 @@ export async function getAllVideos() {
     videos.push({ ...info, file: await handle.getFile() })
   }
 
-  return videos
+  return videos.filter((v) => v.file.size > 0)
 }
 
 export async function getVideo(videoId: string) {
