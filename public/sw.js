@@ -71,5 +71,13 @@ self.addEventListener('activate', (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
+  const { pathname, hostname } = new URL(event.request.url)
+  const isSameOrigin = location.hostname === hostname
+
+  // skip service worker for api calls
+  if (pathname.startsWith('/api') && isSameOrigin) {
+    return
+  }
+
   event.respondWith(cacheFirst(event.request))
 })
