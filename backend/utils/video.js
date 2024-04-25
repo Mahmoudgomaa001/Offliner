@@ -3,13 +3,13 @@ import ffmpeg from 'ffmpeg-static'
 import ytdl from 'ytdl-core'
 
 export const QUALITY_ITAG_MAP_1080p = {
-  webm: {
-    audio: [251],
-    video: [248],
-  },
+  // webm: {
+  //   audio: [251],
+  //   video: [248],
+  // },
   mp4: {
     audio: [140, 141],
-    video: [137, 399],
+    video: [137, 299, 399],
   },
 }
 
@@ -33,10 +33,12 @@ export async function downloadHighestQualityVideo(url, res) {
     videoFormat.container === 'webm' ? 'video/webm' : 'video/x-matroska'
 
   res.header('Content-Type', contentType)
-  res.header(
-    'Content-Length',
-    +audioFormat.contentLength + +videoFormat.contentLength
-  )
+  if (videoFormat.container === 'webm') {
+    res.header(
+      'Content-Length',
+      +audioFormat.contentLength + +videoFormat.contentLength
+    )
+  }
 
   const audio = ytdl(url, { format: audioFormat })
   const video = ytdl(url, { format: videoFormat })
@@ -47,10 +49,6 @@ export async function downloadHighestQualityVideo(url, res) {
 }
 
 export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
-  // mp4 requires re-encoding the audio which breaks the content-lenght
-  // so we keep it webm or use mkv as a container
-  // maybe we should just use mkv all the time?
-  const outFormat = outputContainer === 'webm' ? 'webm' : 'matroska'
   const ffmpegProcess = cp.spawn(
     ffmpeg,
     [
@@ -65,11 +63,12 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
       ['-map', '0:a'],
       ['-map', '1:v'],
 
+      outputContainer === 'mp4' ? ['-movflags', 'isml+frag_keyframe'] : [],
       // Keep video encoding. encode audio as flac
       ['-c:v', 'copy'],
       ['-c:a', 'copy'],
 
-      ['-f', outFormat, 'pipe:5'],
+      ['-f', outputContainer, 'pipe:5'],
     ].flat(),
     {
       windowsHide: true,
@@ -89,8 +88,12 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
   audioStream.pipe(ffmpegProcess.stdio[3])
   videoStream.pipe(ffmpegProcess.stdio[4])
 
-  ffmpegProcess.stdio[3].on('error', console.error)
-  ffmpegProcess.stdio[4].on('error', console.error)
+  ffmpegProcess.stdio[3].on('error', (err) => {
+    console.error('audio', err)
+  })
+  ffmpegProcess.stdio[4].on('error', (err) => {
+    console.error('video', err)
+  })
 
   return ffmpegProcess.stdio[5]
 }
@@ -112,13 +115,13 @@ function selectFormat(formats = []) {
       audioFormat = formats.find((f) => audio.includes(f.itag))
       videoFormat = formats.find((f) => video.includes(f.itag))
 
-      break
+      if (audioFormat && videoFormat) break
     } catch (error) {
       console.log('error choosing format', error)
     }
   }
 
-  if (!audioFormat && !videoFormat) {
+  if (!audioFormat || !videoFormat) {
     console.error('No Format found')
     return null
   }

@@ -35,17 +35,21 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
 
       const [stream1, stream2] = response.body.tee()
 
-      const reader = stream2.getReader()
-      reader.read().then(function processText({ done, value }) {
-        if (done) return
+      if (response.headers.has('Content-Length')) {
+        const reader = stream2.getReader()
+        reader.read().then(function processText({ done, value }) {
+          if (done) return
 
-        bytesLengthReceived += value.byteLength
-        setPercentFetched(
-          Math.round((bytesLengthReceived * 100) / contentLength)
-        )
+          bytesLengthReceived += value.byteLength
+          setPercentFetched(
+            Math.round((bytesLengthReceived * 100) / contentLength)
+          )
 
-        return reader.read().then(processText)
-      })
+          return reader.read().then(processText)
+        })
+      } else {
+        stream2.cancel()
+      }
 
       stream1.pipeTo(fileWriteStream).then(async () => {
         await set(videoId, { ...videoDetails, downloadedAt: new Date() })
