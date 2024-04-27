@@ -30,7 +30,7 @@ export async function downloadHighestQualityVideo(url, res) {
   const { audioFormat, videoFormat } = selectedFormats
 
   const contentType =
-    videoFormat.container === 'webm' ? 'video/webm' : 'video/x-matroska'
+    videoFormat.container === 'webm' ? 'video/webm' : 'video/mp4'
 
   res.header('Content-Type', contentType)
   if (videoFormat.container === 'webm') {
