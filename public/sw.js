@@ -79,5 +79,10 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // skip sentry error reporting
+  if (hostname.endsWith('sentry.io')) {
+    return
+  }
+
   event.respondWith(cacheFirst(event.request))
 })
