@@ -13,8 +13,8 @@ export default function Videos() {
     getAllVideos().then((videos) => {
       videos.sort((a, b) =>
         new Date(a.downloadedAt).getTime() > new Date(b.downloadedAt).getTime()
-          ? 1
-          : -1
+          ? -1
+          : 1
       )
 
       setVideos(videos)
