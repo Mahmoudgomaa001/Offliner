@@ -2683,6 +2683,11 @@ negotiator@0.6.3:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.3.tgz#58e323a72fedc0d6f9cd4d31fe49f51479590ccd"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
+new-javascript@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/new-javascript/-/new-javascript-0.4.3.tgz#94db4334a440a326b8cc76e2cc08ba9e5acb0b4c"
+  integrity sha512-G0Hqbri1yZ+gQZipjUYBenuKxUVxMA6cdSoqua2lk/murq9SxhFl8HAQkLLHwYnEBjVWtRWZ5nSiP1tjKbbmCQ==
+
 node-releases@^2.0.14:
   version "2.0.14"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.14.tgz#2ffb053bceb8b2be8495ece1ab6ce600c4461b0b"

@@ -21,6 +21,7 @@ if (!isProd) {
     clearScreen: false,
     logLevel: 'info',
     server: {
+      host: true,
       middlewareMode: true,
       watch: {
         usePolling: true,
