@@ -3,10 +3,10 @@ import ffmpeg from 'ffmpeg-static'
 import ytdl from 'ytdl-core'
 
 export const QUALITY_ITAG_MAP_1080p = {
-  // webm: {
-  //   audio: [251],
-  //   video: [248],
-  // },
+  webm: {
+    audio: [251],
+    video: [248],
+  },
   mp4: {
     audio: [140, 141],
     video: [137, 299, 399],
@@ -15,19 +15,11 @@ export const QUALITY_ITAG_MAP_1080p = {
 
 export async function downloadHighestQualityVideo(url, res) {
   const info = await ytdl.getInfo(url)
+  const selectedFormat = selectFormat(info.formats)
 
-  const has1080 =
-    info.formats.findIndex(
-      (f) => f.qualityLabel === '1080p' || f.quality === 'hd1080'
-    ) > -1
+  if (selectedFormat.format) return downloadLowQualityVideo(info, url, res)
 
-  if (!has1080) return downloadLowQualityVideo(info, url, res)
-
-  const selectedFormats = selectFormat(info.formats)
-
-  if (!selectedFormats) return downloadLowQualityVideo(info, url, res)
-
-  const { audioFormat, videoFormat } = selectedFormats
+  const { audioFormat, videoFormat } = selectedFormat
 
   const contentType =
     videoFormat.container === 'webm' ? 'video/webm' : 'video/mp4'
@@ -107,7 +99,7 @@ function downloadLowQualityVideo(info, url, res) {
   return ytdl(url, { format: format })
 }
 
-function selectFormat(formats = []) {
+export function selectFormat(formats = []) {
   let audioFormat, videoFormat
   for (const container in QUALITY_ITAG_MAP_1080p) {
     const { audio, video } = QUALITY_ITAG_MAP_1080p[container]
@@ -122,8 +114,9 @@ function selectFormat(formats = []) {
   }
 
   if (!audioFormat || !videoFormat) {
-    console.error('No Format found')
-    return null
+    const format = ytdl.chooseFormat(formats, { quality: 'highestvideo' })
+
+    return { format }
   }
 
   return { audioFormat, videoFormat }

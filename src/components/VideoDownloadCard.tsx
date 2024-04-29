@@ -1,58 +1,84 @@
 import { useEffect, useState } from 'react'
-import { MoreVideoDetails } from 'ytdl-core'
 import { Download, Loader } from 'lucide-react'
 
-import { createWriteStream, removeVideo } from '@/lib/FileSystemManager'
+import {
+  ExtendedVideoInfo,
+  createWriteStream,
+  removeVideo,
+} from '@/lib/FileSystemManager'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
-import { formatSeconds } from '@/lib/utils'
+import { formatSeconds, humanFileSize } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
 import { useNavigate } from 'react-router-dom'
+import { getVideoSize } from '@/lib/video'
 
 type Props = {
-  videoDetails: MoreVideoDetails
+  videoInfo: ExtendedVideoInfo
 }
-export default function VideoDownloadCard({ videoDetails }: Props) {
+export default function VideoDownloadCard({ videoInfo }: Props) {
   const { toast } = useToast()
   const navigate = useNavigate()
   const [fetching, setFetching] = useState(false)
   const [percentFetched, setPercentFetched] = useState(0)
-  const { thumbnails, title, video_url, lengthSeconds, videoId } = videoDetails
+  const { thumbnails, title, video_url, lengthSeconds, videoId } =
+    videoInfo.videoDetails
+  const videoSize = getVideoSize(videoInfo)
 
   useEffect(() => {
     setPercentFetched(0)
-  }, [videoDetails.videoId])
+  }, [videoId])
 
   async function downloadVideoStream() {
+    const swReg = await navigator.serviceWorker?.ready
+
+    if (swReg?.backgroundFetch) {
+      swReg.backgroundFetch
+        .fetch(videoId, [`/api/video/download?url=${video_url}`], {
+          title,
+          downloadTotal: videoSize.accurate ? videoSize.size : null,
+          icons: [{ src: videoInfo.videoDetails.thumbnails?.at(-1)?.url }],
+        })
+        .then((reg) => {
+          reg.onprogress = () => {
+            setPercentFetched(
+              Math.ceil((reg.downloaded * 100) / videoSize.size)
+            )
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          toast({ title: err.message || err.toString() })
+        })
+
+      return
+    }
+
+    // backgroundFetch not supported we do the normal download and write to disk
     const fileWriteStream = await createWriteStream(videoId)
 
     setFetching(true)
     try {
       const response = await fetch(`/api/video/download?url=${video_url}`)
       let bytesLengthReceived = 0
-      const contentLength = +response.headers.get('Content-Length')
 
       const [stream1, stream2] = response.body.tee()
 
-      if (response.headers.has('Content-Length')) {
-        const reader = stream2.getReader()
-        reader.read().then(function processText({ done, value }) {
-          if (done) return
+      const reader = stream2.getReader()
+      reader.read().then(function processText({ done, value }) {
+        if (done) return
 
-          bytesLengthReceived += value.byteLength
-          setPercentFetched(
-            Math.round((bytesLengthReceived * 100) / contentLength)
-          )
+        bytesLengthReceived += value.byteLength
+        setPercentFetched(
+          Math.ceil((bytesLengthReceived * 100) / videoSize.size)
+        )
 
-          return reader.read().then(processText)
-        })
-      } else {
-        stream2.cancel()
-      }
+        return reader.read().then(processText)
+      })
 
       stream1.pipeTo(fileWriteStream).then(async () => {
-        await set(videoId, { ...videoDetails, downloadedAt: new Date() })
+        await set(videoId, { ...videoInfo, downloadedAt: new Date() })
 
         toast({
           title: `"${title}" Has been downloaded`,
@@ -95,7 +121,18 @@ export default function VideoDownloadCard({ videoDetails }: Props) {
       </div>
 
       <div className="flex flex-col justify-between gap-2 flex-grow">
-        <p className="text-lg font-semibold line-clamp-4">{title}</p>
+        <div>
+          <p className="text-lg font-semibold line-clamp-4" dir="auto">
+            {title}
+          </p>
+          {!!videoSize.size && (
+            <p>
+              <span className="text-muted-foreground">size:</span>{' '}
+              {!videoSize.accurate && <span>~</span>}
+              {humanFileSize(videoSize.size)}
+            </p>
+          )}
+        </div>
 
         <Button
           className="flex gap-2 w-full md:w-auto"

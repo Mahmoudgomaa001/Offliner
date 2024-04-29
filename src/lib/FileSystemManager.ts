@@ -1,4 +1,4 @@
-import { MoreVideoDetails } from 'ytdl-core'
+import { MoreVideoDetails, videoFormat, videoInfo } from 'ytdl-core'
 import { del, get } from '@/lib/videoStore'
 
 export async function createWriteStream(filename: string) {
@@ -21,6 +21,17 @@ export type localVideoDetails = MoreVideoDetails & {
   downloadedAt: Date
 }
 
+export type ExtendedVideoInfo = videoInfo & {
+  selectedFormat:
+    | {
+        videoFormat: videoFormat
+        audioFormat: videoFormat
+      }
+    | {
+        format: videoFormat
+      }
+}
+
 export async function getAllVideos() {
   const root = await navigator.storage.getDirectory()
   const youtubeFolder = await root.getDirectoryHandle('youtube', {
@@ -29,9 +40,9 @@ export async function getAllVideos() {
 
   const videos: localVideoDetails[] = []
 
-  // @ts-expect-error
   for await (let [name, handle] of youtubeFolder.entries()) {
     const info = await get(name)
+    // @ts-expect-error
     videos.push({ ...info, file: await handle.getFile() })
   }
 

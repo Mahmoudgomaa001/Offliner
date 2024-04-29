@@ -1,15 +1,15 @@
 import { useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Loader, Search } from 'lucide-react'
-import { videoInfo } from 'ytdl-core'
 import VideoDownloadCard from '@/components/VideoDownloadCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ExtendedVideoInfo } from '@/lib/FileSystemManager'
 
 function Home() {
   let [searchParams] = useSearchParams()
-  const [url, setUrl] = useState(searchParams.get('description') || '')
-  const [videoDetails, setVideoDetails] = useState<videoInfo>()
+  const [url, setUrl] = useState(searchParams.get('description') || 'https://youtu.be/zZee9UqTDoM?si=9GjMosA7nHFceQt1')
+  const [videoDetails, setVideoDetails] = useState<ExtendedVideoInfo>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -71,9 +71,7 @@ function Home() {
         )}
       </form>
 
-      {videoDetails && (
-        <VideoDownloadCard videoDetails={videoDetails.videoDetails} />
-      )}
+      {videoDetails && <VideoDownloadCard videoInfo={videoDetails} />}
     </main>
   )
 }

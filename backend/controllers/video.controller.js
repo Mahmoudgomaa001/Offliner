@@ -1,7 +1,7 @@
 import fs from 'fs'
 import ytdl from 'ytdl-core'
 
-import { downloadHighestQualityVideo } from '../utils/video.js'
+import { downloadHighestQualityVideo, selectFormat } from '../utils/video.js'
 
 const TMP_FILE = 'file'
 
@@ -12,8 +12,9 @@ export const videoInfo = async (req, res) => {
 
   try {
     const info = await ytdl.getInfo(url)
+    const selectedFormat = selectFormat(info.formats)
 
-    res.send(info)
+    res.send({ ...info, selectedFormat })
   } catch (error) {
     res.status(500).send({ error: error.toString() })
   }
