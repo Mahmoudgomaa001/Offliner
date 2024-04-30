@@ -1,4 +1,8 @@
-const cacheVersion = 1
+import { createWriteStream } from '@/lib/FileSystemManager'
+
+declare const self: ServiceWorkerGlobalScope
+
+const cacheVersion = 2
 const cacheName = `cache-v${cacheVersion}`
 const cacheableHosts = ['i.ytimg.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
@@ -86,3 +90,29 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(cacheFirst(event.request))
 })
+
+addEventListener(
+  'backgroundfetchsuccess',
+  async (event: BackgroundFetchUpdateUIEvent) => {
+    event.waitUntil(handleBackgroundFetchSuccess(event))
+  }
+)
+
+async function handleBackgroundFetchSuccess(
+  event: BackgroundFetchUpdateUIEvent
+) {
+  const bgFetch = event.registration
+  const fileWriteStream = await createWriteStream(bgFetch.id)
+
+  // debugger
+
+  const records = await bgFetch.matchAll()
+  const record = records[0]
+  const response = await record.responseReady
+
+  response.body.pipeTo(fileWriteStream).then(async () => {
+    // await set(videoId, { ...videoInfo, downloadedAt: new Date() })
+  })
+
+  event.updateUI({ title: 'Episode 5 ready to listen!', icons: [] })
+}

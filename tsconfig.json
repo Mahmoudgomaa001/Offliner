@@ -26,6 +26,6 @@
     // types
     "types": ["new-javascript"]
   },
-  "include": ["src"],
+  "include": ["src", "service-worker.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

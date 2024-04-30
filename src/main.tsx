@@ -17,6 +17,8 @@ import './index.css'
 import Layout from './Layout'
 import VideoPlayer from '@/scenes/VideoPlayer'
 
+import { serviceWorkerFile } from 'virtual:vite-plugin-service-worker'
+
 Sentry.init({
   dsn: 'https://65eb81765d3a2badf689190f63cc2e8c@o4507159862968320.ingest.de.sentry.io/4507159866179664',
   integrations: [
@@ -43,6 +45,7 @@ Sentry.init({
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
+  denyUrls: ['localhost'],
 })
 
 const router = createBrowserRouter([
@@ -71,3 +74,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <RouterProvider router={router} />
   </React.StrictMode>
 )
+
+navigator.serviceWorker.register(serviceWorkerFile, {
+  type: 'module',
+})
