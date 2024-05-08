@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 export default function Videos() {
   const [videos, setVideos] = useState<localVideoDetails[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadVideos()
@@ -18,8 +19,11 @@ export default function Videos() {
       )
 
       setVideos(videos)
+      setLoading(false)
     })
   }
+
+  if (loading) return <p className="text-center">Loading...</p>
 
   if (!videos.length)
     return <p className="text-center">No videos downloaded yet!</p>
