@@ -33,7 +33,8 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
   async function downloadVideoStream() {
     const swReg = await navigator.serviceWorker?.ready
 
-    if (swReg?.backgroundFetch) {
+    // temp disable
+    if (false && swReg?.backgroundFetch) {
       swReg.backgroundFetch
         .fetch(videoId, [`/api/video/download?url=${video_url}`], {
           title,
