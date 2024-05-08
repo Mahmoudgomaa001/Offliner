@@ -17,7 +17,7 @@ export async function downloadHighestQualityVideo(url, res) {
   const info = await ytdl.getInfo(url)
   const selectedFormat = selectFormat(info.formats)
 
-  if (selectedFormat.format) return downloadLowQualityVideo(info, url, res)
+  if (selectedFormat.format) return downloadLowQualityVideo(selectedFormat.format, url, res)
 
   const { audioFormat, videoFormat } = selectedFormat
 
@@ -90,9 +90,7 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
   return ffmpegProcess.stdio[5]
 }
 
-function downloadLowQualityVideo(info, url, res) {
-  const format = ytdl.chooseFormat(info.formats, { quality: 'highestvideo' })
-
+function downloadLowQualityVideo(format, url, res) {
   res.header('Content-Type', format.mimeType.split(';')[0])
   res.header('Content-Length', format.contentLength)
 
@@ -114,7 +112,10 @@ export function selectFormat(formats = []) {
   }
 
   if (!audioFormat || !videoFormat) {
-    const format = ytdl.chooseFormat(formats, { quality: 'highestvideo' })
+    const format = ytdl.chooseFormat(formats, {
+      quality: 'highestvideo',
+      filter: (f) => f.hasAudio && f.hasVideo,
+    })
 
     return { format }
   }
