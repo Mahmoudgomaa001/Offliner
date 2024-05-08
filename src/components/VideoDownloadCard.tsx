@@ -79,7 +79,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       })
 
       stream1.pipeTo(fileWriteStream).then(async () => {
-        await set(videoId, { ...videoInfo, downloadedAt: new Date() })
+        await set(videoId, { ...videoInfo.videoDetails, downloadedAt: new Date() })
 
         toast({
           title: `"${title}" Has been downloaded`,
