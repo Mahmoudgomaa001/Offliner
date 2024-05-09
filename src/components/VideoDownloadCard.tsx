@@ -28,13 +28,13 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
 
   useEffect(() => {
     setPercentFetched(0)
+    setFetching(false)
   }, [videoId])
 
   async function downloadVideoStream() {
     const swReg = await navigator.serviceWorker?.ready
 
-    // temp disable
-    if (false && swReg?.backgroundFetch) {
+    if (swReg?.backgroundFetch) {
       swReg.backgroundFetch
         .fetch(videoId, [`/api/video/download?url=${video_url}`], {
           title,
@@ -42,10 +42,17 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
           icons: [{ src: videoInfo.videoDetails.thumbnails?.at(-1)?.url }],
         })
         .then((reg) => {
+          setFetching(true)
+          set(videoId, {
+            ...videoInfo.videoDetails,
+            downloadedAt: new Date(),
+          })
+
           reg.onprogress = () => {
-            setPercentFetched(
-              Math.ceil((reg.downloaded * 100) / videoSize.size)
-            )
+            const progress = Math.ceil((reg.downloaded * 100) / videoSize.size)
+            setPercentFetched(progress)
+
+            if (progress >= 100) setFetching(false)
           }
         })
         .catch((err) => {
@@ -79,7 +86,10 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       })
 
       stream1.pipeTo(fileWriteStream).then(async () => {
-        await set(videoId, { ...videoInfo.videoDetails, downloadedAt: new Date() })
+        await set(videoId, {
+          ...videoInfo.videoDetails,
+          downloadedAt: new Date(),
+        })
 
         toast({
           title: `"${title}" Has been downloaded`,

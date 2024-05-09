@@ -1,8 +1,9 @@
-import { createWriteStream } from '@/lib/FileSystemManager'
+import { createWriteStream, removeVideo } from '@/lib/FileSystemManager'
+import { del } from '@/lib/videoStore'
 
 declare const self: ServiceWorkerGlobalScope
 
-const cacheVersion = 2
+const cacheVersion = 3
 const cacheName = `cache-v${cacheVersion}`
 const cacheableHosts = ['i.ytimg.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
@@ -98,21 +99,59 @@ addEventListener(
   }
 )
 
+addEventListener(
+  'backgroundfetchfailure',
+  async (event: BackgroundFetchUpdateUIEvent) => {
+    event.waitUntil(handleBackgroundFetchFailure(event))
+  }
+)
+addEventListener(
+  'backgroundfetchabort',
+  async (event: BackgroundFetchUpdateUIEvent) => {
+    event.waitUntil(handleBackgroundFetchFailure(event))
+  }
+)
+
 async function handleBackgroundFetchSuccess(
   event: BackgroundFetchUpdateUIEvent
 ) {
   const bgFetch = event.registration
-  const fileWriteStream = await createWriteStream(bgFetch.id)
-
-  // debugger
+  const videoId = bgFetch.id
+  const fileWriteStream = await createWriteStream(videoId)
 
   const records = await bgFetch.matchAll()
-  const record = records[0]
-  const response = await record.responseReady
+  const response = await records[0].responseReady
 
-  response.body.pipeTo(fileWriteStream).then(async () => {
-    // await set(videoId, { ...videoInfo, downloadedAt: new Date() })
+  await response.body.pipeTo(fileWriteStream).then(async () => {
+    await wait(30)
+
+    function wait(ms: number) {
+      return new Promise((resolve) => setTimeout(resolve, ms))
+    }
   })
+}
 
-  event.updateUI({ title: 'Episode 5 ready to listen!', icons: [] })
+async function handleBackgroundFetchFailure(
+  event: BackgroundFetchUpdateUIEvent
+) {
+  const { id } = event.registration
+
+  await del(id)
+  await removeVideo(id)
+  let message: string = event.registration.failureReason
+
+  switch (event.registration.failureReason) {
+    case 'aborted':
+      message = 'Download Canceled!'
+      break
+
+    case 'fetch-error':
+      message = 'Download Error!'
+      break
+
+    case 'quota-exceeded':
+      message = 'Quota Exceeded Error!'
+  }
+
+  event?.updateUI({ title: message })
 }
