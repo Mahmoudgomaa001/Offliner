@@ -29,8 +29,23 @@ export default function VideoPlayer() {
     if (!videoRef.current || !videoDetails) return
 
     const src = URL.createObjectURL(videoDetails.file)
+    const video = videoRef.current
+    video.src = src
 
-    videoRef.current.src = src
+    // hack to make webm video seekable
+    // https://stackoverflow.com/questions/21522036/html-audio-tag-duration-always-infinity
+    video.addEventListener('loadedmetadata', () => {
+      if (video.duration === Infinity || isNaN(Number(video.duration))) {
+        video.currentTime = 1e101
+        video.addEventListener('timeupdate', getDuration)
+      }
+    })
+
+    function getDuration(event: Event) {
+      // @ts-expect-error
+      event.target.currentTime = 0
+      event.target.removeEventListener('timeupdate', getDuration)
+    }
 
     return () => URL.revokeObjectURL(src)
   }, [videoRef.current, videoDetails?.videoId])
