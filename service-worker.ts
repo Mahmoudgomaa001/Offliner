@@ -41,15 +41,19 @@ const cacheFirst = async (request) => {
     return responseFromNetwork
   }
 
-  // if requesting /[page].html return index.html so react can handle it
-  if (request.mode === 'navigate') {
-    const req = new Request('/index.html')
-    const responseFromCache = await caches.match(req)
-
-    if (responseFromCache) return responseFromCache
-  }
-
   return await fetch(request)
+}
+
+const networkFirst = async (request: Request) => {
+  try {
+    const fetchedResponse = await fetch(request.url)
+
+    putInCache(request, fetchedResponse.clone())
+
+    return fetchedResponse
+  } catch (error) {
+    return caches.match(request)
+  }
 }
 
 self.addEventListener('install', (event) => {
@@ -89,7 +93,13 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  event.respondWith(cacheFirst(event.request))
+  // if requesting /[page].html return index.html so react can handle it
+  if (event.request.mode === 'navigate') {
+    const req = new Request('/index.html')
+    event.respondWith(networkFirst(req))
+  } else {
+    event.respondWith(cacheFirst(event.request))
+  }
 })
 
 addEventListener(

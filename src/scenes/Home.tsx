@@ -8,7 +8,7 @@ import { ExtendedVideoInfo } from '@/lib/FileSystemManager'
 
 function Home() {
   let [searchParams] = useSearchParams()
-  const [url, setUrl] = useState(searchParams.get('description') || 'https://youtu.be/zZee9UqTDoM?si=9GjMosA7nHFceQt1')
+  const [url, setUrl] = useState(searchParams.get('description') || '')
   const [videoDetails, setVideoDetails] = useState<ExtendedVideoInfo>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
