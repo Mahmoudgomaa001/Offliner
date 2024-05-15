@@ -22,7 +22,7 @@ export async function getAllOptions(): Promise<Options> {
   const options = Object.fromEntries(
     keys
       .map((key, index) => [key, values[index]])
-      .filter(([key, value]) => !!value)
+      .filter(([_, value]) => !!value)
   )
 
   return {
@@ -31,7 +31,9 @@ export async function getAllOptions(): Promise<Options> {
   }
 }
 
-export async function getOption(key: OptionsKeys) {
+export async function getOption<T extends OptionsKeys>(
+  key: T
+): Promise<Options[T]> {
   const value = await get(key)
 
   return value ?? defaultOptions[key]
