@@ -13,6 +13,7 @@ import { formatSeconds, humanFileSize } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
 import { useNavigate } from 'react-router-dom'
 import { getVideoSize } from '@/lib/video'
+import { getOption } from '@/lib/options'
 
 type Props = {
   videoInfo: ExtendedVideoInfo
@@ -33,8 +34,9 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
 
   async function downloadVideoStream() {
     const swReg = await navigator.serviceWorker?.ready
+    const useBgFetch = await getOption('useBgFetch')
 
-    if (swReg?.backgroundFetch) {
+    if (swReg?.backgroundFetch && useBgFetch) {
       swReg.backgroundFetch
         .fetch(videoId, [`/api/video/download?url=${video_url}`], {
           title,
