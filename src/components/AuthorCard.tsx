@@ -10,10 +10,8 @@ export default function AuthorCard({ author }: Props) {
     <div className="flex gap-3">
       <img
         src={author.thumbnails?.[1]?.url}
-        width={50}
-        height={50}
         alt={author.user}
-        className="rounded-full ring-2 ring-offset-2 ring-slate-300"
+        className="rounded-full ring-2 ring-offset-2 ring-slate-300 h-14 w-14"
       />
 
       <div className="flex flex-col">
