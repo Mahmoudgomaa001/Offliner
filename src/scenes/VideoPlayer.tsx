@@ -1,6 +1,9 @@
 import AuthorCard from '@/components/AuthorCard'
 import VideoCard from '@/components/VideoCard'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
+import { getOption, setOption } from '@/lib/options'
 import { formatNumber } from '@/lib/utils'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -10,19 +13,48 @@ export default function VideoPlayer() {
   const videoRef = useRef<ElementRef<'video'>>(null)
   const [videoDetails, setVideoDetails] = useState<localVideoDetails>(null)
   const [videos, setVideos] = useState<localVideoDetails[]>([])
+  const [autoPlay, setAutoPlay] = useState(false)
 
   useEffect(() => {
     getAllVideos().then((videos) => {
-      const video = videos.find((v) => v.videoId === videoId)
-      setVideoDetails(video)
-      setVideos(videos.filter((v) => v.videoId !== videoId))
+      const videoIndex = videos.findIndex((v) => v.videoId === videoId)
+      const previousVideos = videos.slice(0, videoIndex)
+      const currentVideo = videos.slice(videoIndex, videoIndex + 1)
+      const nextVideos = videos.slice(videoIndex + 1)
+
+      setVideoDetails(currentVideo[0])
+      setVideos(nextVideos.concat(previousVideos))
     })
   }, [videoId])
+
+  useEffect(() => {
+    getOption('autoPlay').then(setAutoPlay)
+  }, [])
+
+  // auto play next
+  useEffect(() => {
+    if (!videoRef.current) return
+
+    if (autoPlay) {
+      videoRef.current.addEventListener('ended', autoPlayNextVideo)
+    } else {
+      videoRef.current.removeEventListener('ended', autoPlayNextVideo)
+    }
+  }, [autoPlay, videoRef])
+
+  function autoPlayNextVideo() {
+    ;(document.querySelector('#videos-list a') as HTMLAnchorElement)?.click()
+  }
 
   function loadVideos() {
     getAllVideos().then((videos) => {
       setVideos(videos.filter((v) => v.videoId !== videoId))
     })
+  }
+
+  async function handleAutoPlayChange(checked: boolean) {
+    setAutoPlay(checked)
+    await setOption('autoPlay', checked)
   }
 
   useEffect(() => {
@@ -71,10 +103,26 @@ export default function VideoPlayer() {
       <AuthorCard author={videoDetails.author} />
 
       {!!videos.length && (
-        <h2 className="mt-8 mb-3 text-xl font-medium">More Videos</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="mt-8 mb-3 text-xl font-medium">More Videos</h2>
+          <div className="flex items-center  gap-2">
+            <Label htmlFor="auto-pla" className="text-md">
+              Auto Play
+            </Label>
+            <Switch
+              id="auto-play"
+              className="h-full"
+              onCheckedChange={handleAutoPlayChange}
+              checked={autoPlay}
+            />
+          </div>
+        </div>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div
+        id="videos-list"
+        className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      >
         {videos.map((video) => (
           <VideoCard
             videoInfo={video}
