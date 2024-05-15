@@ -1,5 +1,8 @@
 import { cn } from '@/lib/utils'
 import { NavLink, Link } from 'react-router-dom'
+import { Button } from './ui/button'
+import { Settings } from 'lucide-react'
+import SettingsModal from './SettingsModal'
 
 type Props = {
   className?: string
@@ -20,22 +23,21 @@ export default function Navbar({ className }: Props) {
           width={40}
           height={40}
         />
-        <span>V-Loader</span>
       </Link>
 
-      <div className="flex gap-3">
-        <NavLink
-          to="/"
-          className={({ isActive }) => (isActive ? 'font-semibold' : '')}
-        >
-          Home
-        </NavLink>
+      <div className="flex items-center gap-3">
         <NavLink
           to="/videos"
           className={({ isActive }) => (isActive ? 'font-semibold' : '')}
         >
           Videos
         </NavLink>
+
+        <SettingsModal>
+          <Button variant="ghost">
+            <Settings size={20} />
+          </Button>
+        </SettingsModal>
       </div>
     </nav>
   )
