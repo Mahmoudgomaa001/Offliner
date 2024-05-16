@@ -126,7 +126,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         <img
           src={thumbnails.at(-1).url}
           alt={title}
-          className="rounded-lg object-cover w-full"
+          className="rounded-lg object-cover w-full h-full"
         />
         <p className="absolute bottom-2 right-2 bg-[#00000099] text-white rounded p-1 leading-none">
           {formatSeconds(+lengthSeconds)}

@@ -29,7 +29,7 @@ export default function Videos() {
     return <p className="text-center">No videos downloaded yet!</p>
 
   return (
-    <main className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mx-8">
+    <main className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mx-4 md:mx-8">
       {videos.map((video) => (
         <VideoCard
           videoInfo={video}

@@ -45,7 +45,7 @@ function Home() {
   }, [])
 
   return (
-    <main className="max-w-[700px] mx-auto">
+    <main className="max-w-[700px] mx-4 md:mx-auto">
       <form onSubmit={getInfo} className="mb-8">
         <div className="flex gap-4">
           <Input
