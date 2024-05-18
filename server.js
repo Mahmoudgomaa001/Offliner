@@ -1,3 +1,6 @@
+// Sentry integration. this should come first
+import './instrument.js'
+
 import express from 'express'
 import fs from 'fs'
 
