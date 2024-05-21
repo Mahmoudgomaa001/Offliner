@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/toaster'
 import Navbar from '@/components/Navbar'
+import ErrorBoundary from './components/ErrorBoundary'
 
 export default function App() {
   return (
@@ -9,7 +10,9 @@ export default function App() {
       <Navbar className="px-4 md:px-0" />
 
       <div className="md:px-4">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </div>
 
       <Toaster />
