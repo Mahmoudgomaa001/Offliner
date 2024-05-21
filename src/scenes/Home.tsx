@@ -49,7 +49,8 @@ function Home() {
       <form onSubmit={getInfo} className="mb-8">
         <div className="flex gap-4">
           <Input
-            type="url"
+            type="text"
+            required
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onFocus={(e) => {
