@@ -12,6 +12,7 @@ import * as Sentry from '@sentry/react'
 
 import Videos from '@/scenes/Videos'
 import Home from '@/scenes/Home'
+import Playlists from '@/scenes/Playlists'
 
 import './index.css'
 import Layout from './Layout'
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         Component: Home,
+      },
+      {
+        path: '/playlists',
+        Component: Playlists,
       },
       {
         path: '/videos',

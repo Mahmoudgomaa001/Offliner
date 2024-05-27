@@ -33,6 +33,13 @@ export default function Navbar({ className }: Props) {
           Videos
         </NavLink>
 
+        <NavLink
+          to="/playlists"
+          className={({ isActive }) => (isActive ? 'font-semibold' : '')}
+        >
+          Playlists
+        </NavLink>
+
         <SettingsModal>
           <Button variant="ghost">
             <Settings size={20} />
