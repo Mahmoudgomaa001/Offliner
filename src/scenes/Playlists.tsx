@@ -1,21 +1,11 @@
 import CreatePlaylistModal from '@/components/CreatePlaylistModal'
+import useAsync from '@/components/hooks/useAsync'
 import { Button } from '@/components/ui/button'
-import { Playlist, getAllPlaylists, playlistUrl } from '@/lib/playlist'
-import { useEffect, useState } from 'react'
+import { getAllPlaylists, playlistUrl } from '@/lib/playlist'
 import { Link } from 'react-router-dom'
 
 export default function Playlists() {
-  const [playlists, setPlaylists] = useState<Playlist[]>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getAllPlaylists()
-      .then(setPlaylists)
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  const { loading, value: playlists } = useAsync(() => getAllPlaylists())
 
   return (
     <main className="max-w-[700px] mx-auto">
