@@ -41,6 +41,9 @@ export async function getAllPlaylists() {
 
   return playlists
 }
+export async function delPlaylist(name: string) {
+  return del(name)
+}
 
 export function playlistUrl(name: string) {
   return `/playlists/${btoa(name)}`
@@ -50,6 +53,10 @@ async function set(key: string, val: any) {
   const db = await dbPromise
 
   return db.put(storeName, val, key)
+}
+
+async function del(key: string) {
+  return (await dbPromise).delete(storeName, key)
 }
 
 // async function get(key: string) {

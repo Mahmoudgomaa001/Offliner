@@ -41,7 +41,7 @@ export default function Navbar({ className }: Props) {
         </NavLink>
 
         <SettingsModal>
-          <Button variant="ghost">
+          <Button variant="ghost" size='icon'>
             <Settings size={20} />
           </Button>
         </SettingsModal>

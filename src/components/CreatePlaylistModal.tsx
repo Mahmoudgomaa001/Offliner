@@ -20,6 +20,7 @@ import { DialogClose } from '@radix-ui/react-dialog'
 
 type Props = {
   children: React.ReactNode
+  onOpenChange?: (open: boolean) => void
 }
 
 type Video = {
@@ -27,7 +28,7 @@ type Video = {
   videoId: string
 }
 
-export default function CreatePlaylistModal({ children }: Props) {
+export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
   const closeBtnRef = useRef<HTMLButtonElement>()
   const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
@@ -73,7 +74,7 @@ export default function CreatePlaylistModal({ children }: Props) {
   }
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[calc(100%-20px)] md:max-w-[700px]">
         <DialogHeader>

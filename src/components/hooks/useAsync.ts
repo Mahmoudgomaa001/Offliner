@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 export default function useAsync<T>(
   callback: () => Promise<T>,
   dependencies = []
-): { loading: boolean; error: any; value: T } {
+): { loading: boolean; error: any; value: T; refresh: () => void } {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [value, setValue] = useState<T>()
@@ -22,5 +22,5 @@ export default function useAsync<T>(
     callbackMemoized()
   }, [callbackMemoized])
 
-  return { loading, error, value }
+  return { loading, error, value, refresh: callbackMemoized }
 }
