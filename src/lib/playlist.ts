@@ -1,64 +1,94 @@
-import { openDB } from 'idb'
+import { DBSchema, openDB } from 'idb'
 import { getAllVideos, localVideoDetails } from './FileSystemManager'
 
 const storeName = 'playlists'
-const dbPromise = openDB('Playlists', 1, {
+
+interface PlaylistDb extends DBSchema {
+  [storeName]: {
+    key: string
+    value: {
+      id: string
+      name: string
+      videoIds: string[]
+      createdAt: Date
+      lastPlayedId: string | undefined
+    }
+    indexes: { 'by-name': string; 'by-date': Date }
+  }
+}
+
+const dbPromise = openDB<PlaylistDb>('PlaylistsDb', 1, {
   upgrade(db) {
-    db.createObjectStore(storeName)
+    const store = db.createObjectStore(storeName, {
+      keyPath: 'id',
+    })
+
+    store.createIndex('by-name', 'name', { unique: true })
+    store.createIndex('by-date', 'createdAt')
   },
 })
 
 export type Playlist = {
+  id: string
   name: string
   videos: localVideoDetails[]
+  createdAt: Date
 }
 
 export async function createPlaylist(name: string, videoIds: string[]) {
-  return await set(name, videoIds)
-}
-
-export async function getAllPlaylists() {
   const db = await dbPromise
 
-  const keysPromise = db.getAllKeys(storeName) as unknown as string[]
-  const valuesPromise = db.getAll(storeName)
-  const videosPromise = getAllVideos()
+  const exists = await db.getFromIndex(storeName, 'by-name', name)
 
-  const [keys, values, videos] = await Promise.all([
-    keysPromise,
-    valuesPromise,
-    videosPromise,
+  if (exists) throw Error('Name already exist')
+
+  return db.add(storeName, {
+    id: crypto.randomUUID(),
+    name,
+    videoIds,
+    createdAt: new Date(),
+    lastPlayedId: undefined,
+  })
+}
+
+export async function getPlaylist(id: string): Promise<Playlist> {
+  const db = await dbPromise
+
+  const playlist = await db.get(storeName, id)
+  const videos = await getAllVideos(playlist.videoIds)
+
+  return {
+    id: playlist.id,
+    name: playlist.name,
+    videos: videos,
+    createdAt: playlist.createdAt,
+  }
+}
+
+export async function getAllPlaylists(): Promise<Playlist[]> {
+  const db = await dbPromise
+
+  const [values, videos] = await Promise.all([
+    db.getAll(storeName),
+    getAllVideos(),
   ])
 
-  let playlists: Playlist[] = []
-
-  keys.forEach((k, idx) => {
-    playlists.push({
-      name: k,
-      videos: videos.filter((v) => values[idx].includes(v.videoId)),
-    })
-  })
-
-  return playlists
-}
-export async function delPlaylist(name: string) {
-  return del(name)
+  return values
+    .map((value) => ({
+      id: value.id,
+      name: value.name,
+      createdAt: value.createdAt,
+      videos: videos.filter((v) => value.videoIds.includes(v.videoId)),
+    }))
+    .sort((a, b) =>
+      new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? -1 : 1
+    )
 }
 
-export function playlistUrl(name: string) {
-  return `/playlists/${btoa(name)}`
-}
-
-async function set(key: string, val: any) {
-  const db = await dbPromise
-
-  return db.put(storeName, val, key)
+export async function delPlaylist(id: string) {
+  return del(id)
 }
 
 async function del(key: string) {
   return (await dbPromise).delete(storeName, key)
 }
-
-// async function get(key: string) {
-//   return (await dbPromise).get(storeName, key)
-// }

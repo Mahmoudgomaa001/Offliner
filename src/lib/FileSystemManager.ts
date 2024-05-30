@@ -32,7 +32,7 @@ export type ExtendedVideoInfo = videoInfo & {
       }
 }
 
-export async function getAllVideos() {
+export async function getAllVideos(videoIds?: string[]) {
   const root = await navigator.storage.getDirectory()
   const youtubeFolder = await root.getDirectoryHandle('youtube', {
     create: true,
@@ -41,9 +41,11 @@ export async function getAllVideos() {
   const videos: localVideoDetails[] = []
 
   for await (let [name, handle] of youtubeFolder.entries()) {
-    const info = await get(name)
-    // @ts-expect-error
-    videos.push({ ...info, file: await handle.getFile() })
+    if (videoIds === undefined || (videoIds && videoIds.includes(name))) {
+      const info = await get(name)
+      // @ts-expect-error
+      videos.push({ ...info, file: await handle.getFile() })
+    }
   }
 
   return videos.filter((v) => v.file.size > 0)

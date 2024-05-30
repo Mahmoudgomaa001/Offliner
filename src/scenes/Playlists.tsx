@@ -7,7 +7,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { toast } from '@/components/ui/use-toast'
-import { delPlaylist, getAllPlaylists, playlistUrl } from '@/lib/playlist'
+import { delPlaylist, getAllPlaylists } from '@/lib/playlist'
 import { formatSeconds } from '@/lib/utils'
 import { ChevronsUpDown, Edit, Trash } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -15,11 +15,7 @@ import { Fragment } from 'react/jsx-runtime'
 import * as Sentry from '@sentry/react'
 
 export default function Playlists() {
-  const {
-    loading,
-    value: playlists,
-    refresh,
-  } = useAsync(() => getAllPlaylists())
+  const { loading, value: playlists, refresh } = useAsync(getAllPlaylists)
 
   async function removePlaylist(name: string) {
     try {
@@ -46,9 +42,9 @@ export default function Playlists() {
       ) : (
         <div>
           {playlists.map((p) => (
-            <Collapsible key={p.name} className="space-y-2">
+            <Collapsible key={p.id} className="space-y-2">
               <div className="flex items-center border mb-2 rounded p-2">
-                <Link to={playlistUrl(p.name)} className="flex-grow">
+                <Link to={`/playlists/${p.id}`} className="flex-grow">
                   {p.name}: ({p.videos.length})
                 </Link>
 
@@ -63,7 +59,7 @@ export default function Playlists() {
                 </Button>
 
                 <Button
-                  onClick={() => removePlaylist(p.name)}
+                  onClick={() => removePlaylist(p.id)}
                   variant="ghost"
                   className="hover:bg-red-500 hover:text-white"
                   size="icon"

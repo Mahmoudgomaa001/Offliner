@@ -44,13 +44,19 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
       .filter(([_, checked]) => checked)
       .map(([id]) => id)
 
+    if (selectedIds.length === 0) {
+      toast({ title: 'No videos selected', duration: 1500 })
+
+      return
+    }
+
     try {
       await createPlaylist(name, selectedIds)
       closeBtnRef.current?.click()
       toast({ title: 'Playlist created!', duration: 900 })
       resetForm()
     } catch (error) {
-      toast({ title: error, duration: 900 })
+      toast({ title: error.message || error.toString(), duration: 1500 })
     }
   }
 
@@ -83,7 +89,7 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <form id="playlists-form" className="py-4">
+          <form id="playlists-form" className="py-4" onSubmit={saveChanges}>
             <div>
               <Label htmlFor="name" className="mb-2 block">
                 Name
@@ -128,7 +134,7 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
               Close
             </Button>
           </DialogClose>
-          <Button form="playlists-form" type="submit" onClick={saveChanges}>
+          <Button form="playlists-form" type="submit">
             Create
           </Button>
         </DialogFooter>
