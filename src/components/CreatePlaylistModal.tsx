@@ -109,7 +109,10 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
 
               <ScrollArea className="h-72 w-full rounded-md border p-2">
                 {videos.map((v) => (
-                  <div className="flex items-center gap-2 my-2" key={v.videoId}>
+                  <div
+                    className="flex items-center gap-2 hover:bg-gray-100 py-2"
+                    key={v.videoId}
+                  >
                     <Checkbox
                       id={v.videoId}
                       value={v.videoId}
