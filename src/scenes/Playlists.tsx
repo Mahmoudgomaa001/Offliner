@@ -54,9 +54,14 @@ export default function Playlists() {
                   </Button>
                 </CollapsibleTrigger>
 
-                <Button variant="ghost" size="icon">
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <CreatePlaylistModal
+                  playlist={p}
+                  onOpenChange={(open) => !open && refresh()}
+                >
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </CreatePlaylistModal>
 
                 <Button
                   onClick={() => removePlaylist(p.id)}

@@ -51,6 +51,22 @@ export async function createPlaylist(name: string, videoIds: string[]) {
   })
 }
 
+export async function updatePlaylist(
+  id: string,
+  name: string,
+  videoIds: string[]
+) {
+  const db = await dbPromise
+
+  const original = await db.get(storeName, id)
+
+  return db.put(storeName, {
+    ...original,
+    name,
+    videoIds,
+  })
+}
+
 export async function getPlaylist(id: string): Promise<Playlist> {
   const db = await dbPromise
 

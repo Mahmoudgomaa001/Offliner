@@ -14,13 +14,14 @@ import { Input } from './ui/input'
 import { getAllVideos } from '@/lib/FileSystemManager'
 import { Checkbox } from './ui/checkbox'
 import { ScrollArea } from './ui/scroll-area'
-import { createPlaylist } from '@/lib/playlist'
+import { Playlist, createPlaylist, updatePlaylist } from '@/lib/playlist'
 import { toast } from './ui/use-toast'
 import { DialogClose } from '@radix-ui/react-dialog'
 
 type Props = {
   children: React.ReactNode
   onOpenChange?: (open: boolean) => void
+  playlist?: Playlist
 }
 
 type Video = {
@@ -28,21 +29,21 @@ type Video = {
   videoId: string
 }
 
-export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
+export default function CreatePlaylistModal({
+  playlist,
+  children,
+  onOpenChange,
+}: Props) {
   const closeBtnRef = useRef<HTMLButtonElement>()
   const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
-  const [name, setName] = useState('')
-  const [selectedVideos, setSelectedVideos] = useState<Record<string, boolean>>(
-    {}
+  const [name, setName] = useState(playlist?.name || '')
+  const [selectedIds, setSelectedIds] = useState(
+    playlist?.videos?.map((v) => v.videoId) || []
   )
 
   async function saveChanges(e: SyntheticEvent) {
     e.preventDefault()
-
-    const selectedIds = Object.entries(selectedVideos)
-      .filter(([_, checked]) => checked)
-      .map(([id]) => id)
 
     if (selectedIds.length === 0) {
       toast({ title: 'No videos selected', duration: 1500 })
@@ -51,7 +52,12 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
     }
 
     try {
-      await createPlaylist(name, selectedIds)
+      if (playlist) {
+        await updatePlaylist(playlist.id, name, selectedIds)
+      } else {
+        await createPlaylist(name, selectedIds)
+      }
+
       closeBtnRef.current?.click()
       toast({ title: 'Playlist created!', duration: 900 })
       resetForm()
@@ -62,7 +68,10 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
 
   function handleCheckedChange(videoId: string) {
     return (checked: boolean) => {
-      setSelectedVideos({ ...selectedVideos, [videoId]: checked })
+      if (checked) setSelectedIds([...selectedIds, videoId])
+      else {
+        setSelectedIds(selectedIds.toSpliced(selectedIds.indexOf(videoId), 1))
+      }
     }
   }
 
@@ -75,8 +84,8 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
   }, [])
 
   function resetForm() {
-    setName('')
-    setSelectedVideos({})
+    setName(playlist?.name || '')
+    setSelectedIds(playlist?.videos?.map((v) => v.videoId) || [])
   }
 
   return (
@@ -116,7 +125,7 @@ export default function CreatePlaylistModal({ children, onOpenChange }: Props) {
                     <Checkbox
                       id={v.videoId}
                       value={v.videoId}
-                      checked={selectedVideos[v.videoId]}
+                      checked={selectedIds.includes(v.videoId)}
                       onCheckedChange={handleCheckedChange(v.videoId)}
                     />
                     <label
