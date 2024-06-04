@@ -13,6 +13,7 @@ import * as Sentry from '@sentry/react'
 import Videos from '@/scenes/Videos'
 import Home from '@/scenes/Home'
 import Playlists from '@/scenes/Playlists'
+import PlaylistPlayer from '@/scenes/PlaylistPlayer'
 
 import './index.css'
 import Layout from './Layout'
@@ -34,10 +35,6 @@ Sentry.init({
     }),
     Sentry.replayIntegration(),
   ],
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  tracesSampleRate: 1.0,
 
   // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
   tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
@@ -61,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: '/playlists',
         Component: Playlists,
+      },
+      {
+        path: '/playlists/:id',
+        Component: PlaylistPlayer,
       },
       {
         path: '/videos',

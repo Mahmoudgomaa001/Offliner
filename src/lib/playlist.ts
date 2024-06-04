@@ -33,6 +33,7 @@ export type Playlist = {
   name: string
   videos: localVideoDetails[]
   createdAt: Date
+  lastPlayedId: string | undefined
 }
 
 export async function createPlaylist(name: string, videoIds: string[]) {
@@ -51,10 +52,13 @@ export async function createPlaylist(name: string, videoIds: string[]) {
   })
 }
 
+type PlaylistUpdateAttrs = Partial<
+  Omit<PlaylistDb['playlists']['value'], 'id' | 'createdAt'>
+>
+
 export async function updatePlaylist(
   id: string,
-  name: string,
-  videoIds: string[]
+  playlist: PlaylistUpdateAttrs
 ) {
   const db = await dbPromise
 
@@ -62,8 +66,7 @@ export async function updatePlaylist(
 
   return db.put(storeName, {
     ...original,
-    name,
-    videoIds,
+    ...playlist,
   })
 }
 
@@ -78,6 +81,7 @@ export async function getPlaylist(id: string): Promise<Playlist> {
     name: playlist.name,
     videos: videos,
     createdAt: playlist.createdAt,
+    lastPlayedId: playlist.lastPlayedId,
   }
 }
 
@@ -94,6 +98,7 @@ export async function getAllPlaylists(): Promise<Playlist[]> {
       id: value.id,
       name: value.name,
       createdAt: value.createdAt,
+      lastPlayedId: value.lastPlayedId,
       videos: videos.filter((v) => value.videoIds.includes(v.videoId)),
     }))
     .sort((a, b) =>

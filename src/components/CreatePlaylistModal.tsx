@@ -53,7 +53,7 @@ export default function CreatePlaylistModal({
 
     try {
       if (playlist) {
-        await updatePlaylist(playlist.id, name, selectedIds)
+        await updatePlaylist(playlist.id, { name, videoIds: selectedIds })
       } else {
         await createPlaylist(name, selectedIds)
       }

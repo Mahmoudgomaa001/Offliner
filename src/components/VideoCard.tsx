@@ -45,18 +45,20 @@ export default function VideoCard({ videoInfo, onDelete }: Props) {
         <Eye size={22} className="flex-shrink-0 text-muted-foreground" />
       </h3>
 
-      <Button
-        onClick={async () => {
-          const id = videoInfo.videoId || videoInfo.file.name
-          await removeVideo(id)
-          onDelete?.(id)
-        }}
-        size="icon"
-        variant="secondary"
-        className="absolute !mt-0 top-1 right-1 hidden group-hover:flex"
-      >
-        <X size={20} />
-      </Button>
+      {onDelete && (
+        <Button
+          onClick={async () => {
+            const id = videoInfo.videoId || videoInfo.file.name
+            await removeVideo(id)
+            onDelete(id)
+          }}
+          size="icon"
+          variant="secondary"
+          className="absolute !mt-0 top-1 right-1 hidden group-hover:flex"
+        >
+          <X size={20} />
+        </Button>
+      )}
     </div>
   )
 }
