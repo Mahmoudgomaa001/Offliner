@@ -7,13 +7,18 @@ import { Button } from '@/components/ui/button'
 type Props = {
   videoInfo: localVideoDetails
   onDelete?: (videoId: string) => void
+  onClick?: (videoId: string) => void
 }
-export default function VideoCard({ videoInfo, onDelete }: Props) {
-  const videoLink = `/videos/${videoInfo.videoId}`
+export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
+  const videoLink = onClick ? undefined : `/videos/${videoInfo.videoId}`
 
   return (
     <div className="space-y-2 relative group">
-      <Link className="font-medium" to={videoLink}>
+      <Link
+        className="font-medium"
+        to={videoLink}
+        onClick={() => onClick?.(videoInfo.videoId)}
+      >
         <div className="relative w-full">
           <img
             alt="Video thumbnail"

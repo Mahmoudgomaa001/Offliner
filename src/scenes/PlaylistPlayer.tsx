@@ -42,8 +42,7 @@ export default function PlaylistPlayer() {
   }, [currentVideo])
 
   function handleVideoEnded() {
-    setCurrentVideo(videos[0])
-    updatePlaylist(playlist.id, { lastPlayedId: videos[0].videoId })
+    playVideo(videos[0])
   }
 
   useEffect(() => {
@@ -54,6 +53,15 @@ export default function PlaylistPlayer() {
 
     return () => URL.revokeObjectURL(src)
   }, [currentVideo])
+
+  function handleCardClick(videoId: string) {
+    playVideo(videos.find((v) => v.videoId === videoId))
+  }
+
+  function playVideo(video: localVideoDetails) {
+    setCurrentVideo(video)
+    updatePlaylist(playlist.id, { lastPlayedId: video.videoId })
+  }
 
   if (loading) {
     return <p className="text-center">Loading...</p>
@@ -91,7 +99,9 @@ export default function PlaylistPlayer() {
         {videos.map((video) => (
           <VideoCard
             videoInfo={video}
-            key={video.videoId}          />
+            key={video.videoId}
+            onClick={handleCardClick}
+          />
         ))}
       </div>
     </main>
