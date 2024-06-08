@@ -1,8 +1,17 @@
-import { Eye, X } from 'lucide-react'
+import { Eye, GanttChart, Loader, RefreshCcw, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { localVideoDetails, removeVideo } from '@/lib/FileSystemManager'
 import { formatNumber, formatSeconds, humanFileSize } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { useRef, useState } from 'react'
+import { toast } from './ui/use-toast'
+import { set } from '@/lib/videoStore'
+import { PopoverClose } from '@radix-ui/react-popover'
 
 type Props = {
   videoInfo: localVideoDetails
@@ -10,28 +19,55 @@ type Props = {
   onClick?: (videoId: string) => void
 }
 export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
-  const videoLink = onClick ? undefined : `/videos/${videoInfo.videoId}`
+  const closeBtn = useRef<HTMLButtonElement>()
+  const [fetching, setFetching] = useState(false)
+  const [video, setVideo] = useState(videoInfo)
+  const videoLink = onClick ? undefined : `/videos/${video.videoId}`
+
+  const refreshVideo = async () => {
+    setFetching(true)
+
+    try {
+      const response = await fetch(`/api/video/info?url=${video.videoId}`)
+      const data = await response.json()
+
+      if (response.ok) {
+        const updated = { ...videoInfo, ...data.videoDetails }
+
+        setVideo(updated)
+        await set(videoInfo.videoId, updated)
+        toast({ title: 'Video refreshed!' })
+        closeBtn.current.click()
+      } else {
+        toast({ title: data.error.toString() })
+      }
+    } catch (error) {
+      toast({ title: (error as Error).message })
+    } finally {
+      setFetching(false)
+    }
+  }
 
   return (
     <div className="space-y-2 relative group">
       <Link
         className="font-medium"
         to={videoLink}
-        onClick={() => onClick?.(videoInfo.videoId)}
+        onClick={() => onClick?.(video.videoId)}
       >
         <div className="relative w-full">
           <img
             alt="Video thumbnail"
             className="aspect-video overflow-hidden rounded-lg object-cover w-full"
             height={225}
-            src={videoInfo.thumbnails?.at(-1)?.url}
+            src={video.thumbnails?.at(-1)?.url}
             width={400}
           />
           <p className="absolute bottom-2 left-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">
-            {humanFileSize(videoInfo.file.size)}
+            {humanFileSize(video.file.size)}
           </p>
           <p className="absolute bottom-2 right-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">
-            {formatSeconds(+videoInfo.lengthSeconds)}
+            {formatSeconds(+video.lengthSeconds)}
           </p>
         </div>
         <span className="sr-only">Watch video</span>
@@ -41,29 +77,62 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
           className="hover:underline text-base font-semibold leading-none flex-grow mr-1"
           to={videoLink}
         >
-          {videoInfo.title}
+          {video.title}
         </Link>
 
         <p className="text-sm text-muted-foreground w-12">
-          {formatNumber(+videoInfo.viewCount)}
+          {formatNumber(+video.viewCount)}
         </p>
         <Eye size={22} className="flex-shrink-0 text-muted-foreground" />
       </h3>
 
-      {onDelete && (
-        <Button
-          onClick={async () => {
-            const id = videoInfo.videoId || videoInfo.file.name
-            await removeVideo(id)
-            onDelete(id)
-          }}
-          size="icon"
-          variant="secondary"
-          className="absolute !mt-0 top-1 right-1 hidden group-hover:flex"
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute text-white !mt-0 top-1 right-1 "
+          >
+            <GanttChart />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="end"
+          className="w-64 flex flex-col gap-2 right-0"
         >
-          <X size={20} />
-        </Button>
-      )}
+          <Button
+            variant="secondary"
+            className="flex gap-2"
+            onClick={refreshVideo}
+          >
+            {fetching ? (
+              <Loader size={18} className="animate-spin" />
+            ) : (
+              <RefreshCcw size={18} />
+            )}
+            Refresh
+          </Button>
+          {onDelete && (
+            <Button
+              onClick={async () => {
+                const id = video.videoId || video.file.name
+                await removeVideo(id)
+                onDelete(id)
+              }}
+              variant="destructive"
+              className="flex gap-2"
+            >
+              <Trash2 size={18} />
+              Delete
+            </Button>
+          )}
+          <PopoverClose asChild>
+            <button hidden ref={closeBtn}>
+              close
+            </button>
+          </PopoverClose>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }
