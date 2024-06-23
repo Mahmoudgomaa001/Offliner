@@ -2,7 +2,7 @@
 
 ARG NODE_VERSION=20.8.1
 
-FROM node:${NODE_VERSION}-alpine as base
+FROM node:${NODE_VERSION}-alpine AS base
 
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 
 ################################################################################
 # Create a stage for installing production dependecies.
-FROM base as deps
+FROM base AS deps
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.yarn to speed up subsequent builds.
@@ -23,7 +23,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 ################################################################################
 # Create a stage for building the application.
-FROM deps as build
+FROM deps AS build
 
 # Download additional development dependencies before building, as some projects require
 # "devDependencies" to be installed to build. If you don't need this, remove this step.
@@ -40,10 +40,10 @@ RUN yarn run build
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
-FROM base as final
+FROM base AS final
 
 # Use production node environment by default.
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Run the application as a non-root user.
 USER node
@@ -60,7 +60,7 @@ COPY --from=build /usr/src/app/backend ./backend
 
 
 # Expose the port that the application listens on.
-EXPOSE 3000
+EXPOSE 8080
 
 # Run the application.
-CMD yarn start
+CMD ["yarn", "start"]
