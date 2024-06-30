@@ -1,6 +1,7 @@
 import cp from 'child_process'
 import ffmpeg from 'ffmpeg-static'
 import ytdl from 'ytdl-core'
+import { logger } from './logger'
 
 export const QUALITY_ITAG_MAP_1080p = {
   webm: {
@@ -81,10 +82,10 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
   videoStream.pipe(ffmpegProcess.stdio[4])
 
   ffmpegProcess.stdio[3].on('error', (err) => {
-    console.error('audio', err)
+    logger.child({ type: 'audio' }).error(err)
   })
   ffmpegProcess.stdio[4].on('error', (err) => {
-    console.error('video', err)
+    logger.child({ type: 'audio' }).error(err)
   })
 
   return ffmpegProcess.stdio[5]
@@ -107,7 +108,7 @@ export function selectFormat(formats = []) {
 
       if (audioFormat && videoFormat) break
     } catch (error) {
-      console.log('error choosing format', error)
+      logger.error('error choosing format', error)
     }
   }
 

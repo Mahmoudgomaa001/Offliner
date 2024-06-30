@@ -2,6 +2,7 @@ import fs from 'fs'
 import ytdl from 'ytdl-core'
 
 import { downloadHighestQualityVideo, selectFormat } from '../utils/video.js'
+import { logger } from '../utils/logger.js'
 
 const TMP_FILE = 'file'
 
@@ -34,14 +35,14 @@ export const videoDownloadFirst = async (req, res) => {
   const { url } = req.query
 
   const writeStream = fs.createWriteStream(TMP_FILE)
-  writeStream.on('error', console.error)
+  writeStream.on('error', logger.error)
 
   const downloadStream = await downloadHighestQualityVideo(url, res)
 
   downloadStream.pipe(writeStream)
 
   downloadStream.on('error', (err) => {
-    console.error(err)
+    logger.error(err)
     res.end()
   })
 
@@ -49,12 +50,12 @@ export const videoDownloadFirst = async (req, res) => {
     const size = fs.statSync('file').size
     res.header('Content-Length', size)
 
-    const deleteTmpFile = () => fs.unlink(TMP_FILE, console.log)
+    const deleteTmpFile = () => fs.unlink(TMP_FILE, logger.error)
 
     fs.createReadStream(TMP_FILE)
       .on('end', deleteTmpFile)
       .on('error', (err) => {
-        console.log(err)
+        logger.error(err)
         deleteTmpFile()
       })
       .pipe(res)

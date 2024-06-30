@@ -14,6 +14,7 @@ module.exports = {
     '.eslintrc.cjs',
     'postcss.config.js',
     'server.js',
+    'backend'
   ],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },

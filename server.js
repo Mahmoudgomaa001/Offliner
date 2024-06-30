@@ -6,6 +6,7 @@ import fs from 'fs'
 
 import VideoRoutes from './backend/routes/video.routes.js'
 import path from 'path'
+import { logger } from './backend/utils/logger.js'
 
 var app = express()
 const isProd = process.env.NODE_ENV === 'production'
@@ -52,7 +53,7 @@ if (isProd) {
 
       res.status(200).end(template)
     } catch (e) {
-      console.log(e.stack)
+      logger.error(e)
       res.status(500).end(e)
     }
   })
@@ -60,5 +61,5 @@ if (isProd) {
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
+  logger.info(`Server running on port ${port}`)
 })
