@@ -60,6 +60,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         })
         .catch((err) => {
           console.log(err)
+          Sentry.captureException(err)
           toast({ title: err.message || err.toString() })
         })
 
