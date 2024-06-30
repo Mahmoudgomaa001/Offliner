@@ -1,7 +1,7 @@
 import cp from 'child_process'
 import ffmpeg from 'ffmpeg-static'
 import ytdl from 'ytdl-core'
-import { logger } from './logger'
+import { logger } from './logger.js'
 
 export const QUALITY_ITAG_MAP_1080p = {
   webm: {
