@@ -1,5 +1,5 @@
 import { MoreVideoDetails, videoFormat, videoInfo } from 'ytdl-core'
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/react';
 import { del, get } from '@/lib/videoStore'
 
 export async function createWriteStream(filename: string) {
