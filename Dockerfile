@@ -51,6 +51,7 @@ COPY --from=prod_deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/instrument.js /usr/src/app/server.js ./
 COPY --from=build /usr/src/app/backend ./backend
+COPY --from=build *.log ./
 
 
 # Expose the port that the application listens on.
