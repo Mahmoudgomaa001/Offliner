@@ -60,6 +60,18 @@ if (isProd) {
 }
 
 const port = process.env.PORT || 3000
-app.listen(port, () => {
+const server = app.listen(port, () => {
   logger.info(`Server running on port ${port}`)
 })
+
+process.on('SIGTERM', handleServerShutdown)
+process.on('SIGINT', handleServerShutdown)
+
+function handleServerShutdown() {
+  logger.info('Server is closing')
+
+  server.close(() => {
+    logger.info('Closed out remaining connections')
+    process.exit(0)
+  })
+}
