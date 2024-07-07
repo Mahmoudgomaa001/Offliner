@@ -1,7 +1,7 @@
 import { openDB } from 'idb'
 
 const storeName = 'video-info'
-const dbPromise = openDB('vloader', 1, {
+const dbPromise = openDB('Offliner', 1, {
   upgrade(db) {
     db.createObjectStore(storeName)
   },

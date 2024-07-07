@@ -1,8 +1,8 @@
 {
-  "name": "v-loader",
+  "name": "offliner",
   "version": "1.0.0",
   "main": "server.js",
-  "repository": "git@github.com:Laassari/pwa.git",
+  "repository": "git@github.com:Laassari/Offliner.git",
   "author": "Noureddine Laassari <nlaassari@gmail.com>",
   "license": "MIT",
   "type": "module",

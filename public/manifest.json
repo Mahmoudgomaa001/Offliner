@@ -1,7 +1,7 @@
 {
-  "name": "V-Loader",
+  "name": "Offliner",
   "display": "standalone",
-  "short_name": "v-loader",
+  "short_name": "Offliner",
   "description": "app that downloads videos from know websites",
   "start_url": "/",
   "scope": "/",
