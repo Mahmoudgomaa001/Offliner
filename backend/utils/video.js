@@ -18,7 +18,8 @@ export async function downloadHighestQualityVideo(url, res) {
   const info = await ytdl.getInfo(url)
   const selectedFormat = selectFormat(info.formats)
 
-  if (selectedFormat.format) return downloadLowQualityVideo(selectedFormat.format, url, res)
+  if (selectedFormat.format)
+    return downloadLowQualityVideo(selectedFormat.format, url, res)
 
   const { audioFormat, videoFormat } = selectedFormat
 
@@ -78,8 +79,12 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
     }
   )
 
-  audioStream.pipe(ffmpegProcess.stdio[3])
-  videoStream.pipe(ffmpegProcess.stdio[4])
+  audioStream
+    .on('error', (err) => onDownloadStreamError(err, ffmpegProcess.stdio[5]))
+    .pipe(ffmpegProcess.stdio[3])
+  videoStream
+    .on('error', (err) => onDownloadStreamError(err, ffmpegProcess.stdio[5]))
+    .pipe(ffmpegProcess.stdio[4])
 
   ffmpegProcess.stdio[3].on('error', (err) => {
     logger.child({ type: 'audio' }).error(err)
@@ -89,6 +94,10 @@ export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
   })
 
   return ffmpegProcess.stdio[5]
+}
+
+function onDownloadStreamError(error, stream) {
+  stream.emit('error', error.toString())
 }
 
 function downloadLowQualityVideo(format, url, res) {

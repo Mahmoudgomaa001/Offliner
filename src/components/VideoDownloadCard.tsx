@@ -58,11 +58,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
             if (progress >= 100) setFetching(false)
           }
         })
-        .catch((err) => {
-          console.log(err)
-          Sentry.captureException(err)
-          toast({ title: err.message || err.toString() })
-        })
+        .catch(onStreamError)
 
       return
     }
@@ -72,16 +68,13 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
 
     setFetching(true)
     try {
-      const response = await fetch(
-        `/api/video/download?url=${video_url}`
-      ).catch((err) => {
-        console.log(err)
-        Sentry.captureException(err)
-        toast({ title: err.message || err.toString() })
-      })
+      const response = await fetch(`/api/video/download?url=${video_url}`)
       let bytesLengthReceived = 0
 
-      if (!response) return
+      if (!response || response.status > 200) {
+        onStreamError(`Failed to fetch. Status: ${response.status}`)
+        return
+      }
 
       const [stream1, stream2] = response.body.tee()
 
@@ -129,6 +122,12 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     } finally {
       setFetching(false)
     }
+  }
+
+  function onStreamError(err: any) {
+    console.log(err)
+    Sentry.captureException(err)
+    toast({ title: err.message || err.toString() })
   }
 
   return (

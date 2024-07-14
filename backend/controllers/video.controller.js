@@ -31,6 +31,8 @@ export const videoDownload = async (req, res) => {
   stream
     .on('error', (err) => {
       logger.error(err.toString())
+
+      if (res.writableEnded) return
       req.destroy()
       res.removeHeader('Content-Length')
       res.status(err.statusCode || 500).end()
