@@ -74,4 +74,10 @@ function handleServerShutdown() {
     logger.info('Closed out remaining connections')
     process.exit(0)
   })
+
+  // Force close remaning connections
+  setTimeout(() => {
+    server.closeAllConnections()
+    process.exit(1)
+  }, 3000)
 }
