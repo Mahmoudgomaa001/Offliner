@@ -36,13 +36,6 @@ export async function downloadHighestQualityVideo(url, res) {
   const audio = ytdl(url, { format: audioFormat })
   const video = ytdl(url, { format: videoFormat })
 
-  audio.on('error', (err) => {
-    logger.child({ type: 'audio download' }).error(err)
-  })
-  video.on('error', (err) => {
-    logger.child({ type: 'video download' }).error(err)
-  })
-
   const mergeStream = mergeAudioAndVideo(audio, video, videoFormat.container)
 
   return mergeStream

@@ -28,7 +28,14 @@ export const videoDownload = async (req, res) => {
 
   const stream = await downloadHighestQualityVideo(url, res)
 
-  stream.pipe(res)
+  stream
+    .on('error', (err) => {
+      logger.error(err.toString())
+      req.destroy()
+      res.removeHeader('Content-Length')
+      res.status(err.statusCode || 500).end()
+    })
+    .pipe(res)
 }
 
 export const videoDownloadFirst = async (req, res) => {

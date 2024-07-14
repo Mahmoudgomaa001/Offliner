@@ -72,8 +72,16 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
 
     setFetching(true)
     try {
-      const response = await fetch(`/api/video/download?url=${video_url}`)
+      const response = await fetch(
+        `/api/video/download?url=${video_url}`
+      ).catch((err) => {
+        console.log(err)
+        Sentry.captureException(err)
+        toast({ title: err.message || err.toString() })
+      })
       let bytesLengthReceived = 0
+
+      if (!response) return
 
       const [stream1, stream2] = response.body.tee()
 
