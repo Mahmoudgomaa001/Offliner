@@ -4,13 +4,13 @@ import ytdl from '@distube/ytdl-core'
 import { logger } from './logger.js'
 
 export const QUALITY_ITAG_MAP_1080p = {
-  webm: {
-    audio: [251],
-    video: [248],
-  },
   mp4: {
     audio: [140, 141],
     video: [137, 299, 399],
+  },
+  webm: {
+    audio: [251],
+    video: [248],
   },
 }
 
