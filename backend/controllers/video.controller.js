@@ -1,5 +1,5 @@
 import fs from 'fs'
-import ytdl from 'ytdl-core'
+import ytdl from '@distube/ytdl-core'
 
 import { downloadHighestQualityVideo, selectFormat } from '../utils/video.js'
 import { logger } from '../utils/logger.js'

@@ -13,6 +13,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.13.5",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -36,8 +37,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "winston": "^3.13.0",
-    "winston-syslog": "^2.7.0",
-    "ytdl-core": "^4.11.5"
+    "winston-syslog": "^2.7.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.79",

@@ -1,5 +1,5 @@
 import { formatNumber } from '@/lib/utils'
-import { Author } from 'ytdl-core'
+import { Author } from '@distube/ytdl-core'
 
 type Props = {
   author: Author

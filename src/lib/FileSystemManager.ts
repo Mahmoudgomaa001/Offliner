@@ -1,4 +1,4 @@
-import { MoreVideoDetails, videoFormat, videoInfo } from 'ytdl-core'
+import { MoreVideoDetails, videoFormat, videoInfo } from '@distube/ytdl-core'
 import * as Sentry from '@sentry/react';
 import { del, get } from '@/lib/videoStore'
 
