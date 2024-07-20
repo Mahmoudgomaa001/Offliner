@@ -3,7 +3,7 @@ import { del } from '@/lib/videoStore'
 
 declare const self: ServiceWorkerGlobalScope
 
-const cacheVersion = 3
+const cacheVersion = 4
 const cacheName = `cache-v${cacheVersion}`
 const cacheableHosts = ['i.ytimg.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
