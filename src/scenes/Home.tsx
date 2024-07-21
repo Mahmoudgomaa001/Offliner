@@ -5,6 +5,7 @@ import VideoDownloadCard from '@/components/VideoDownloadCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExtendedVideoInfo } from '@/lib/FileSystemManager'
+import RecentDownloads from '@/components/RecentDownloads'
 
 function Home() {
   let [searchParams] = useSearchParams()
@@ -72,7 +73,10 @@ function Home() {
         )}
       </form>
 
-      {videoDetails && <VideoDownloadCard videoInfo={videoDetails} />}
+
+      <div className="max-w-[1400px] md:mx-auto">
+        <RecentDownloads />
+      </div>
     </main>
   )
 }

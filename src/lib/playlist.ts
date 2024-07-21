@@ -74,7 +74,7 @@ export async function getPlaylist(id: string): Promise<Playlist> {
   const db = await dbPromise
 
   const playlist = await db.get(storeName, id)
-  const videos = await getAllVideos(playlist.videoIds)
+  const videos = await getAllVideos({ videoIds: playlist.videoIds })
 
   return {
     id: playlist.id,
