@@ -46,8 +46,8 @@ function Home() {
   }, [])
 
   return (
-    <main className="max-w-[700px] mx-4 md:mx-auto">
-      <form onSubmit={getInfo} className="mb-8">
+    <main className="mx-4 ">
+      <form onSubmit={getInfo} className="mb-8 max-w-[700px] md:mx-auto">
         <div className="flex gap-4">
           <Input
             type="text"
@@ -57,6 +57,7 @@ function Home() {
             onFocus={(e) => {
               e.target.select()
             }}
+            placeholder="https://youtu.be/dQw4w9WgXcQ"
             autoFocus
           />
 
@@ -73,6 +74,11 @@ function Home() {
         )}
       </form>
 
+      {videoDetails && (
+        <div className="max-w-[700px] md:mx-auto">
+          <VideoDownloadCard videoInfo={videoDetails} />
+        </div>
+      )}
 
       <div className="max-w-[1400px] md:mx-auto">
         <RecentDownloads />

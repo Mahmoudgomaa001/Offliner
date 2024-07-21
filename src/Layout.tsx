@@ -5,10 +5,10 @@ import Navbar from '@/components/Navbar'
 import ErrorBoundary from './components/ErrorBoundary'
 import Footer from './components/Footer'
 
-export default function App() {
+export default function Layout() {
   return (
-    <>
-      <Navbar className="px-4 md:px-0" />
+    <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
+      <Navbar className="px-4 md:px-0 min-h-16" />
 
       <div className="md:px-4">
         <ErrorBoundary>
@@ -18,6 +18,6 @@ export default function App() {
 
       <Footer className="min-h-16" />
       <Toaster />
-    </>
+    </div>
   )
 }
