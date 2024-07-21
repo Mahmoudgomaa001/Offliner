@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Github, Linkedin } from 'lucide-react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 type Props = {
@@ -21,6 +21,9 @@ export default function Footer({ className }: Props) {
         </Link>
 
         <div className="flex items-center gap-5 text-[#063658]">
+          <a target="_blank" href="mailto:contact@laassari.com">
+            <Mail />
+          </a>
           <a target="_blank" href="https://www.linkedin.com/in/laassari">
             <Linkedin />
           </a>
