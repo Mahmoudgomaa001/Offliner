@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import Navbar from '@/components/Navbar'
 import ErrorBoundary from './components/ErrorBoundary'
+import Footer from './components/Footer'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         </ErrorBoundary>
       </div>
 
+      <Footer className="min-h-16" />
       <Toaster />
     </>
   )
