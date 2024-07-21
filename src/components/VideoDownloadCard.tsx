@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Download, Loader } from 'lucide-react'
-import * as Sentry from '@sentry/react'
+import { captureException } from '@sentry/react'
 
 import {
   ExtendedVideoInfo,
@@ -113,7 +113,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     } catch (error) {
       await fileWriteStream.close()
       await removeVideo(videoId)
-      Sentry.captureException(error)
+      captureException(error)
 
       toast({
         title: 'An error occurred',
@@ -126,7 +126,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
 
   function onStreamError(err: any) {
     console.log(err)
-    Sentry.captureException(err)
+    captureException(err)
     toast({ title: err.message || err.toString() })
   }
 

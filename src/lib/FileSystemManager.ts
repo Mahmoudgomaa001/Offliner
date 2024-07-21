@@ -1,5 +1,5 @@
 import { MoreVideoDetails, videoFormat, videoInfo } from '@distube/ytdl-core'
-import * as Sentry from '@sentry/react';
+import { captureException } from '@sentry/react'
 import { del, get } from '@/lib/videoStore'
 
 export async function createWriteStream(filename: string) {
@@ -71,7 +71,7 @@ export async function removeVideo(videoId: string) {
     await videoFileHandle.remove()
     await del(videoId)
   } catch (error) {
-    Sentry.captureException(error)
+    captureException(error)
     console.log(error)
   }
 }

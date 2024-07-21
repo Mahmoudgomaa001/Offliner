@@ -12,7 +12,7 @@ import { formatSeconds } from '@/lib/utils'
 import { ChevronsUpDown, Edit, Trash } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
-import * as Sentry from '@sentry/react'
+import { captureException } from '@sentry/react'
 
 export default function Playlists() {
   const { loading, value: playlists, refresh } = useAsync(getAllPlaylists)
@@ -23,7 +23,7 @@ export default function Playlists() {
       refresh()
       toast({ title: 'Playlist removed' })
     } catch (error) {
-      Sentry.captureException(error)
+      captureException(error)
       toast({ title: 'An error occurred!' })
     }
   }

@@ -1,14 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useLocation,
-  useNavigationType,
-  createRoutesFromChildren,
-  matchRoutes,
-} from 'react-router-dom'
-import * as Sentry from '@sentry/react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { init } from '@sentry/react'
 
 import Videos from '@/scenes/Videos'
 import Home from '@/scenes/Home'
@@ -21,23 +14,8 @@ import VideoPlayer from '@/scenes/VideoPlayer'
 
 import { serviceWorkerFile } from 'virtual:vite-plugin-service-worker'
 
-Sentry.init({
+init({
   dsn: 'https://65eb81765d3a2badf689190f63cc2e8c@o4507159862968320.ingest.de.sentry.io/4507159866179664',
-  integrations: [
-    // See docs for support of different versions of variation of react router
-    // https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
-    Sentry.reactRouterV6BrowserTracingIntegration({
-      useEffect: React.useEffect,
-      useLocation,
-      useNavigationType,
-      createRoutesFromChildren,
-      matchRoutes,
-    }),
-    Sentry.replayIntegration(),
-  ],
-
-  // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
 
   // Capture Replay for 10% of all sessions,
   // plus for 100% of sessions with an error
