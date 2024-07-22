@@ -1,7 +1,7 @@
 import { openDB } from 'idb'
 
 const defaultOptions = {
-  useBgFetch: false,
+  useBgFetch: true,
   autoPlay: true,
 }
 
