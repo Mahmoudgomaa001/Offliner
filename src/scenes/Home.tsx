@@ -46,43 +46,53 @@ function Home() {
   }, [])
 
   return (
-    <main className="mx-4 ">
-      <form onSubmit={getInfo} className="mb-8 max-w-[700px] md:mx-auto">
-        <div className="flex gap-4">
-          <Input
-            type="text"
-            required
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onFocus={(e) => {
-              e.target.select()
-            }}
-            placeholder="https://youtu.be/dQw4w9WgXcQ"
-            autoFocus
-          />
+    <main>
+      <div className="mb-8 bg-primary -mt-10 px-4 md:px-0 pb-8">
+        <h1 className="text-3xl md:text-4xl text-center pt-10 font-semibold mb-3 text-accent-foreground">
+          Download YouTube Videos Easily
+        </h1>
+        <p className="mb-6 text-center text-accent-foreground">
+          Paste a YouTube video URL and download it in high quality.
+        </p>
 
-          <Button variant="outline">
-            {fetching ? (
-              <Loader size={20} className="animate-spin" />
-            ) : (
-              <Search size={20} />
-            )}
-          </Button>
-        </div>
-        {error && (
-          <span className="text-red-400 font-semibold text-sm">{error}</span>
+        <form onSubmit={getInfo} className="mb-8 max-w-[700px] md:mx-auto">
+          <div className="flex gap-4">
+            <Input
+              type="text"
+              name="url"
+              required
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onFocus={(e) => {
+                e.target.select()
+              }}
+              placeholder="https://youtu.be/dQw4w9WgXcQ"
+              autoFocus
+            />
+
+            <Button variant="outline">
+              {fetching ? (
+                <Loader size={20} className="animate-spin" />
+              ) : (
+                <Search size={20} />
+              )}
+            </Button>
+          </div>
+          {error && (
+            <span className="text-red-400 font-semibold text-sm">{error}</span>
+          )}
+        </form>
+
+        {videoDetails && (
+          <div className="max-w-[700px] md:mx-auto text-accent-foreground">
+            <VideoDownloadCard videoInfo={videoDetails} />
+          </div>
         )}
-      </form>
-
-      {videoDetails && (
-        <div className="max-w-[700px] md:mx-auto">
-          <VideoDownloadCard videoInfo={videoDetails} />
-        </div>
-      )}
-
-      <div className="max-w-[1400px] md:mx-auto">
-        <RecentDownloads />
       </div>
+
+      {/* <div className="max-w-[1400px] md:mx-auto">
+        <RecentDownloads />
+      </div> */}
     </main>
   )
 }

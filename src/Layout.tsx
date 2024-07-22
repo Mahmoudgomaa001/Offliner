@@ -10,7 +10,8 @@ export default function Layout() {
     <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
       <Navbar className="px-4 md:px-0 min-h-16" />
 
-      <div className="md:px-4">
+      {/* empty div used for grid layout. do not remove */}
+      <div>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
