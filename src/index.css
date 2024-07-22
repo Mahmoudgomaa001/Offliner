@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 202.5deg 87.5% 87.45% / 15%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -16,14 +16,14 @@
     --primary: 204.88deg 87.23% 18.43%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 203.57deg 87.5% 87.45%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 205deg 78.69% 47.84%;
+    --accent-foreground: 202.5deg 55.21% 94.78%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -72,6 +72,7 @@
   }
   body {
     font-family: arial;
-    @apply bg-background text-foreground;
+    color: hsl(var(--primary-foregroundy));
+    background-color: hsl(var(--secondary) / 30%);
   }
 }

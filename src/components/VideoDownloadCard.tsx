@@ -136,7 +136,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         <img
           src={thumbnails.at(-1).url}
           alt={title}
-          className="rounded-lg object-cover w-full h-full"
+          className="rounded-lg object-cover w-full h-full ring-2 ring-accent-foreground"
         />
         <p className="absolute bottom-2 right-2 bg-[#00000099] text-white rounded p-1 leading-none">
           {formatSeconds(+lengthSeconds)}
@@ -150,7 +150,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
           </p>
           {!!videoSize.size && (
             <p>
-              <span className="text-muted-foreground">size:</span>{' '}
+              <span className="text-muted">size:</span>{' '}
               {!videoSize.accurate && <span>~</span>}
               {humanFileSize(videoSize.size)}
             </p>
@@ -161,6 +161,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
           className="flex gap-2 w-full md:w-auto"
           disabled={fetching}
           onClick={downloadVideoStream}
+          variant='secondary'
         >
           {fetching ? (
             <Loader size={20} className="animate-spin" />

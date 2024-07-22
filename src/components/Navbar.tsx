@@ -10,15 +10,16 @@ type Props = {
 
 export default function Navbar({ className }: Props) {
   return (
-    <nav className={cn('mb-10 p-3 bg-[#c3e5fb]', className)}>
+    <nav className={cn('mb-10 p-3 bg-primary text-secondary', className)}>
       <div className="mx-auto max-w-[700px] flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-2">
           <img
             src="/images/icons/icon-128.png"
             alt="logo"
             width={40}
             height={40}
           />
+          <p className='hidden md:block'>Offliner</p>
         </Link>
 
         <div className="flex items-center gap-3">
