@@ -99,11 +99,22 @@ function Home() {
         )}
       </div>
 
-      <div className="px-4 ">
-        <h2 className="text-2xl md:text-3xl text-center">
-          Features You'll Love
+      <div className="max-w-[1400px] md:mx-auto mb-12">
+        <h2 className="text-primary text-2xl md:text-3xl text-center mt-12">
+          Latest Downloads
         </h2>
-        <p className="text-muted-foreground text-center mt-1 mb-8">
+        <p className="text-primary text-center mb-8">
+          Check out the most recently downloaded videos
+        </p>
+
+        <RecentDownloads />
+      </div>
+
+      <div className="px-4 ">
+        <h3 className="text-primary text-2xl md:text-3xl text-center">
+          Features You'll Love
+        </h3>
+        <p className="text-primary text-center mt-1 mb-8">
           Offliner strive to make the whole experience as smooth as possible.
         </p>
 
@@ -172,10 +183,6 @@ function Home() {
           </div>
         </div>
       </div>
-
-      {/* <div className="max-w-[1400px] md:mx-auto">
-        <RecentDownloads />
-      </div> */}
     </main>
   )
 }
