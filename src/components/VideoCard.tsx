@@ -58,7 +58,7 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
         <div className="relative w-full">
           <img
             alt="Video thumbnail"
-            className="aspect-video overflow-hidden rounded-lg object-cover w-full"
+            className="aspect-video overflow-hidden rounded-lg object-cover w-full border border-primary"
             height={225}
             src={video.thumbnails?.at(-1)?.url}
             width={400}
@@ -74,7 +74,7 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
       </Link>
       <h3 className="flex items-center">
         <Link
-          className="hover:underline text-base font-semibold leading-none flex-grow mr-1 text-primary"
+          className="hover:underline text-base leading-none flex-grow mr-1 text-primary"
           to={videoLink}
         >
           {video.title}

@@ -1,6 +1,15 @@
 import { useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Loader, Search } from 'lucide-react'
+import {
+  EyeOff,
+  FolderLock,
+  ListVideo,
+  Loader,
+  Search,
+  SendToBack,
+  Share2,
+  Wind,
+} from 'lucide-react'
 import VideoDownloadCard from '@/components/VideoDownloadCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -48,10 +57,10 @@ function Home() {
   return (
     <main>
       <div className="mb-8 bg-primary -mt-10 px-4 md:px-0 pb-8">
-        <h1 className="text-3xl md:text-4xl text-center pt-10 font-semibold mb-3 text-accent-foreground">
+        <h1 className="text-3xl md:text-5xl text-center font-semibold pt-16 mb-3 text-accent-foreground">
           Download YouTube Videos Easily
         </h1>
-        <p className="mb-6 text-center text-accent-foreground">
+        <p className="mb-20 text-md md:text-xl text-center text-accent-foreground">
           Paste a YouTube video URL and download it in high quality.
         </p>
 
@@ -88,6 +97,80 @@ function Home() {
             <VideoDownloadCard videoInfo={videoDetails} />
           </div>
         )}
+      </div>
+
+      <div className="px-4 ">
+        <h2 className="text-2xl md:text-3xl text-center">
+          Features You'll Love
+        </h2>
+        <p className="text-muted-foreground text-center mt-1 mb-8">
+          Offliner strive to make the whole experience as smooth as possible.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[700px] md:mx-auto">
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <Wind />
+              <p className="">Simple & straightforward</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              Past the URL and download the video. That's it. Now, you are all
+              set. You can watch any time you want.
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <EyeOff />
+
+              <p className="">No ads or tracking</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              We don't deliver ads to use tracking software. Your viewing
+              activity is not collected or shared with any one not even us.
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <SendToBack />
+              <p className="">Download in the background</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              Downloads are launched in the background. So you don't have to
+              worry about closing the website.
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <FolderLock />
+              <p className="">Secure & Private</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              Your downloaded videos are stored in a secure folder in you
+              machine. they can be accessed only through the website.
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <ListVideo />
+              <p className="">Create playlists</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              You can create multiple playlists for you different viewing
+              preferences.
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex gap-3 mb-3">
+              <Share2 />
+
+              <p className="">Share from youtube</p>
+            </div>
+            <p className="text-muted-foreground leading-5">
+              Watching a Youtube video and want to store for later? Just share
+              it with the website.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* <div className="max-w-[1400px] md:mx-auto">
