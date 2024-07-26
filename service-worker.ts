@@ -3,8 +3,11 @@ import { del } from '@/lib/videoStore'
 
 declare const self: ServiceWorkerGlobalScope
 
-const cacheVersion = 5
-const cacheName = `cache-v${cacheVersion}`
+const cacheVersion = 6
+const cacheNames = {
+  APP_SHELL: `cache-v${cacheVersion}`,
+  DYNAMIC: `dynamic-cache`,
+}
 const cacheableHosts = ['i.ytimg.com', 'yt3.ggpht.com']
 const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
 const cacheableResources = [
@@ -17,17 +20,21 @@ const cacheableResources = [
   '/images/icons/icon-512.png',
 ]
 
-const addResourcesToCache = async (resources) => {
-  const cache = await caches.open(cacheName)
-  await cache.addAll(resources)
+const CacheAppShell = async () => {
+  const cache = await caches.open(cacheNames.APP_SHELL)
+  await cache.addAll(cacheableResources.concat(cacheableDynamicAssets))
 }
 
-const putInCache = async (request, response) => {
-  const cache = await caches.open(cacheName)
+const putInCache = async (
+  request: Request,
+  response: Response,
+  cacheName?: string
+) => {
+  const cache = await caches.open(cacheName || cacheNames.DYNAMIC)
   await cache.put(request, response)
 }
 
-const cacheFirst = async (request) => {
+const cacheFirst = async (request: Request) => {
   const responseFromCache = await caches.match(request)
   if (responseFromCache) {
     return responseFromCache
@@ -37,20 +44,25 @@ const cacheFirst = async (request) => {
   if (cacheableHosts.includes(hostname)) {
     const responseFromNetwork = await fetch(request.clone())
 
-    putInCache(request, responseFromNetwork.clone())
-    return responseFromNetwork
+    if (responseFromNetwork.ok) {
+      putInCache(request, responseFromNetwork.clone())
+      return responseFromNetwork
+    }
   }
 
   return await fetch(request)
 }
 
-const networkFirst = async (request: Request) => {
+const networkFirst = async (request: Request, cacheName?: string) => {
   try {
     const fetchedResponse = await fetch(request.url)
 
-    putInCache(request, fetchedResponse.clone())
+    if (fetchedResponse.ok) {
+      putInCache(request, fetchedResponse.clone(), cacheName)
 
-    return fetchedResponse
+      return fetchedResponse
+    }
+    return caches.match(request)
   } catch (error) {
     return caches.match(request)
   }
@@ -59,9 +71,7 @@ const networkFirst = async (request: Request) => {
 self.addEventListener('install', (event) => {
   self.skipWaiting()
 
-  event.waitUntil(
-    addResourcesToCache(cacheableResources.concat(cacheableDynamicAssets))
-  )
+  event.waitUntil(CacheAppShell())
 })
 
 self.addEventListener('activate', (event) => {
@@ -71,7 +81,9 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const keys = await caches.keys()
       return keys.map(async (cache) => {
-        if (cache !== cacheName) {
+        const cacheValues = Object.values(cacheNames)
+
+        if (!cacheValues.includes(cache)) {
           return await caches.delete(cache)
         }
       })
@@ -96,7 +108,7 @@ self.addEventListener('fetch', (event) => {
   // if requesting /[page].html return index.html so react can handle it
   if (event.request.mode === 'navigate') {
     const req = new Request('/index.html')
-    event.respondWith(networkFirst(req))
+    event.respondWith(networkFirst(req, cacheNames.APP_SHELL))
   } else {
     event.respondWith(cacheFirst(event.request))
   }
