@@ -39,6 +39,8 @@ export default function Playlists() {
 
       {loading ? (
         <p className="text-center">Loading...</p>
+      ) : playlists.length === 0 ? (
+        <p className='text-xl text-center text-muted-foreground'>Nothing to show here!</p>
       ) : (
         <div>
           {playlists.map((p) => (
