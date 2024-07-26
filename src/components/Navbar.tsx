@@ -25,14 +25,14 @@ export default function Navbar({ className }: Props) {
         <div className="flex items-center gap-3">
           <NavLink
             to="/videos"
-            className={({ isActive }) => (isActive ? 'font-semibold' : '')}
+            className={({ isActive }) => (isActive ? 'border-b-2 border-secondary' : '')}
           >
             Videos
           </NavLink>
 
           <NavLink
             to="/playlists"
-            className={({ isActive }) => (isActive ? 'font-semibold' : '')}
+            className={({ isActive }) => (isActive ? 'border-b-2 border-secondary' : '')}
           >
             Playlists
           </NavLink>

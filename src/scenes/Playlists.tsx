@@ -33,7 +33,7 @@ export default function Playlists() {
       <div className="flex justify-between items-center mb-5">
         <h1>Playlists</h1>
         <CreatePlaylistModal onOpenChange={(_) => refresh()}>
-          <Button variant="outline">Create</Button>
+          <Button variant="default">Create</Button>
         </CreatePlaylistModal>
       </div>
 
