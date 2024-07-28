@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch'
 import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
 import { getOption, setOption } from '@/lib/options'
 import { formatNumber } from '@/lib/utils'
+import { Loader } from 'lucide-react'
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -14,6 +15,7 @@ export default function VideoPlayer() {
   const [videoDetails, setVideoDetails] = useState<localVideoDetails>(null)
   const [videos, setVideos] = useState<localVideoDetails[]>([])
   const [autoPlay, setAutoPlay] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getAllVideos().then((videos) => {
@@ -24,6 +26,7 @@ export default function VideoPlayer() {
 
       setVideoDetails(currentVideo[0])
       setVideos(nextVideos.concat(previousVideos))
+      setLoading(false)
     })
   }, [videoId])
 
@@ -81,6 +84,8 @@ export default function VideoPlayer() {
 
     return () => URL.revokeObjectURL(src)
   }, [videoRef.current, videoDetails?.videoId])
+
+  if (loading) return  <Loader size={25} className="animate-spin block mx-auto my-12" />
 
   if (!videoDetails) return <p className="text-center">Video Not Found</p>
 

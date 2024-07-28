@@ -9,7 +9,7 @@ import {
 import { toast } from '@/components/ui/use-toast'
 import { delPlaylist, getAllPlaylists } from '@/lib/playlist'
 import { formatSeconds } from '@/lib/utils'
-import { ChevronsUpDown, Edit, Trash } from 'lucide-react'
+import { ChevronsUpDown, Edit, Loader, Trash } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import { captureException } from '@sentry/react'
@@ -38,9 +38,11 @@ export default function Playlists() {
       </div>
 
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <Loader size={25} className="animate-spin block mx-auto my-12" />
       ) : playlists.length === 0 ? (
-        <p className='text-xl text-center text-muted-foreground'>Nothing to show here!</p>
+        <p className="text-xl text-center text-muted-foreground">
+          Nothing to show here!
+        </p>
       ) : (
         <div>
           {playlists.map((p) => (

@@ -1,5 +1,6 @@
 import VideoCard from '@/components/VideoCard'
 import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
+import { Loader } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function Videos() {
@@ -23,7 +24,8 @@ export default function Videos() {
     })
   }
 
-  if (loading) return <p className="text-center">Loading...</p>
+  if (loading)
+    return <Loader size={25} className="animate-spin block mx-auto my-12" />
 
   if (!videos.length)
     return <p className="text-center">No videos downloaded yet!</p>

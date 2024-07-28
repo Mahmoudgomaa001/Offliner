@@ -4,6 +4,7 @@ import useAsync from '@/components/hooks/useAsync'
 import { localVideoDetails } from '@/lib/FileSystemManager'
 import { getPlaylist, updatePlaylist } from '@/lib/playlist'
 import { formatNumber } from '@/lib/utils'
+import { Loader } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -64,7 +65,7 @@ export default function PlaylistPlayer() {
   }
 
   if (loading) {
-    return <p className="text-center">Loading...</p>
+  if (loading) return  <Loader size={25} className="animate-spin block mx-auto my-12" />
   }
 
   if (!playlist) {
