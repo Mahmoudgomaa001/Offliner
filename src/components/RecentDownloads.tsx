@@ -1,7 +1,7 @@
 import { getAllVideos } from '@/lib/FileSystemManager'
 import useAsync from './hooks/useAsync'
 import { Loader, VideoOff } from 'lucide-react'
-import VideoCard from './VideoCard'
+import SmallVideoCard from './SmallVideoCard'
 
 export default function RecentDownloads() {
   const { loading, value: videos } = useAsync(() => getAllVideos({ count: 5 }))
@@ -18,9 +18,15 @@ export default function RecentDownloads() {
     )
 
   return (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mx-4 md:mx-8">
+    <div className="flex flex-col gap-5 mx-4 md:mx-0">
       {videos.map((v) => (
-        <VideoCard videoInfo={v} key={v.title} />
+        <SmallVideoCard
+          imgSrc={v.thumbnails.at(-1).url}
+          title={v.title}
+          lengthSeconds={+v.lengthSeconds}
+          videoId={v.videoId}
+          key={v.videoId}
+        />
       ))}
     </div>
   )
