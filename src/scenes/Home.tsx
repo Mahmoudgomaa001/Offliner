@@ -64,7 +64,10 @@ function Home() {
           Paste a YouTube video URL and download it in high quality.
         </p>
 
-        <form onSubmit={getInfo} className="mb-8 max-w-[700px] md:mx-auto">
+        <form
+          onSubmit={getInfo}
+          className="mb-8 max-w-[var(--max-app-w)] md:mx-auto"
+        >
           <div className="flex gap-4">
             <Input
               type="text"
@@ -93,13 +96,13 @@ function Home() {
         </form>
 
         {videoDetails && (
-          <div className="max-w-[700px] md:mx-auto text-accent-foreground">
+          <div className="max-w-[var(--max-app-w)] md:mx-auto text-accent-foreground">
             <VideoDownloadCard videoInfo={videoDetails} />
           </div>
         )}
       </div>
 
-      <div className="max-w-[700px] md:mx-auto mb-12">
+      <div className="max-w-[var(--max-app-w)] md:mx-auto mb-12">
         <h2 className="text-primary text-2xl md:text-3xl text-center mt-12">
           Latest Downloads
         </h2>
@@ -110,7 +113,7 @@ function Home() {
         <RecentDownloads />
       </div>
 
-      <div className="px-4 ">
+      <div className="max-w-[var(--max-app-w)] md:mx-auto px-4 md:px-0">
         <h3 className="text-primary text-2xl md:text-3xl text-center">
           Features You'll Love
         </h3>
@@ -118,11 +121,11 @@ function Home() {
           Offliner strive to make the whole experience as smooth as possible.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[700px] md:mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
           <div className="flex flex-col">
             <div className="flex gap-3 mb-3">
               <Wind />
-              <p className="">Simple & straightforward</p>
+              <p>Simple & straightforward</p>
             </div>
             <p className="text-muted-foreground leading-5">
               Past the URL and download the video. That's it. Now, you are all
@@ -133,7 +136,7 @@ function Home() {
             <div className="flex gap-3 mb-3">
               <EyeOff />
 
-              <p className="">No ads or tracking</p>
+              <p>No ads or tracking</p>
             </div>
             <p className="text-muted-foreground leading-5">
               We don't deliver ads to use tracking software. Your viewing
@@ -143,7 +146,7 @@ function Home() {
           <div className="flex flex-col">
             <div className="flex gap-3 mb-3">
               <SendToBack />
-              <p className="">Download in the background</p>
+              <p>Download in the background</p>
             </div>
             <p className="text-muted-foreground leading-5">
               Downloads are launched in the background. So you don't have to
@@ -153,7 +156,7 @@ function Home() {
           <div className="flex flex-col">
             <div className="flex gap-3 mb-3">
               <FolderLock />
-              <p className="">Secure & Private</p>
+              <p>Secure & Private</p>
             </div>
             <p className="text-muted-foreground leading-5">
               Your downloaded videos are stored in a secure folder in you
@@ -163,7 +166,7 @@ function Home() {
           <div className="flex flex-col">
             <div className="flex gap-3 mb-3">
               <ListVideo />
-              <p className="">Create playlists</p>
+              <p>Create playlists</p>
             </div>
             <p className="text-muted-foreground leading-5">
               You can create multiple playlists for you different viewing
@@ -174,7 +177,7 @@ function Home() {
             <div className="flex gap-3 mb-3">
               <Share2 />
 
-              <p className="">Share from youtube</p>
+              <p>Share from youtube</p>
             </div>
             <p className="text-muted-foreground leading-5">
               Watching a Youtube video and want to store for later? Just share

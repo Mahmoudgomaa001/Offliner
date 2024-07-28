@@ -91,7 +91,7 @@ export default function CreatePlaylistModal({
   return (
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-[calc(100%-20px)] md:max-w-[700px]">
+      <DialogContent className="max-w-[calc(100%-20px)] md:max-w-[var(--max-app-w)]">
         <DialogHeader>
           <DialogTitle>New Playlists</DialogTitle>
         </DialogHeader>
