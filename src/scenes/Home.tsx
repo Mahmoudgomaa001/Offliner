@@ -102,7 +102,7 @@ function Home() {
         )}
       </div>
 
-      <div className="max-w-[var(--max-app-w)] md:mx-auto mb-12">
+      <div className="max-w-[var(--max-app-w)] md:mx-auto mb-12 px-4 md:px-0">
         <h2 className="text-primary text-2xl md:text-3xl text-center mt-12">
           Latest Downloads
         </h2>

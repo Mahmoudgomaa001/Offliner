@@ -18,7 +18,7 @@ export default function RecentDownloads() {
     )
 
   return (
-    <div className="flex flex-col gap-5 mx-4 md:mx-0">
+    <div className="flex flex-col gap-5">
       {videos.map((v) => (
         <SmallVideoCard
           imgSrc={v.thumbnails.at(-1).url}
