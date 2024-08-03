@@ -144,13 +144,7 @@ async function handleBackgroundFetchSuccess(
   const records = await bgFetch.matchAll()
   const response = await records[0].responseReady
 
-  await response.body.pipeTo(fileWriteStream).then(async () => {
-    await wait(30)
-
-    function wait(ms: number) {
-      return new Promise((resolve) => setTimeout(resolve, ms))
-    }
-  })
+  return response.body.pipeTo(fileWriteStream)
 }
 
 async function handleBackgroundFetchFailure(
