@@ -68,15 +68,10 @@ export async function getVideo(videoId: string) {
 
 export async function removeVideo(videoId: string) {
   const root = await navigator.storage.getDirectory()
-  const youtubeFolder = await root.getDirectoryHandle('youtube', {
-    create: true,
-  })
+  const youtubeFolder = await root.getDirectoryHandle('youtube')
 
   try {
-    const videoFileHandle = await youtubeFolder.getFileHandle(videoId)
-
-    // @ts-expect-error
-    await videoFileHandle.remove()
+    await youtubeFolder.removeEntry(videoId)
     await del(videoId)
   } catch (error) {
     captureException(error)
