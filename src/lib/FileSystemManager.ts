@@ -19,6 +19,7 @@ export async function createWriteStream(filename: string) {
 
 export type localVideoDetails = MoreVideoDetails & {
   file: File
+  type: 'audio' | 'video'
   downloadedAt: Date
 }
 
@@ -27,16 +28,24 @@ export type ExtendedVideoInfo = videoInfo & {
     | {
         videoFormat: videoFormat
         audioFormat: videoFormat
+        highestAudioOnly: videoFormat
       }
     | {
         format: videoFormat
+        highestAudioOnly: videoFormat
       }
 }
 
+type AllVideosProps = {
+  videoIds?: string[]
+  count?: number
+  type?: localVideoDetails['type']
+}
 export async function getAllVideos({
   videoIds,
   count,
-}: { videoIds?: string[]; count?: number } = {}) {
+  type,
+}: AllVideosProps = {}) {
   const root = await navigator.storage.getDirectory()
   const youtubeFolder = await root.getDirectoryHandle('youtube', {
     create: true,
@@ -46,11 +55,13 @@ export async function getAllVideos({
 
   for await (let [name, handle] of youtubeFolder.entries()) {
     if (videoIds === undefined || (videoIds && videoIds.includes(name))) {
-      const info = await get(name)
+      const info: localVideoDetails = await get(name)
       // @ts-expect-error
       const file = await handle.getFile()
 
       if (file.size === 0) continue
+      if (type === 'audio' && info.type !== 'audio') continue
+      if (type === 'video' && info.type !== 'video' && !!info.type) continue
 
       videos.push({ ...info, file })
       if (count && videos.length >= count) break

@@ -12,7 +12,7 @@ export default function Videos() {
   }, [])
 
   function loadVideos() {
-    getAllVideos().then((videos) => {
+    getAllVideos({ type: 'video' }).then((videos) => {
       videos.sort((a, b) =>
         new Date(a.downloadedAt).getTime() > new Date(b.downloadedAt).getTime()
           ? -1

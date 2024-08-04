@@ -21,3 +21,7 @@ export function getVideoSize(videoInfo: ExtendedVideoInfo) {
     accurate,
   }
 }
+
+export function getAudioSize(videoInfo: ExtendedVideoInfo) {
+  return +videoInfo.selectedFormat.highestAudioOnly.contentLength
+}
