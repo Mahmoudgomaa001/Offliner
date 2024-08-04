@@ -1,7 +1,7 @@
 import fs from 'fs'
 import ytdl from '@distube/ytdl-core'
 
-import { downloadHighestQualityVideo, selectFormat } from '../utils/video.js'
+import { downloadHighestQualityVideo, downloadHighestQyalityAudio, selectFormat } from '../utils/video.js'
 import { logger } from '../utils/logger.js'
 
 const TMP_FILE = 'file'
@@ -22,11 +22,16 @@ export const videoInfo = async (req, res) => {
 }
 
 export const videoDownload = async (req, res) => {
-  const { url } = req.query
+  const { url, audioOnly } = req.query
 
   if (!url) return res.send({ error: 'url query is required' })
 
-  const stream = await downloadHighestQualityVideo(url, res)
+  let stream
+  if (audioOnly) {
+    stream = await downloadHighestQyalityAudio(url, res)
+  } else {
+    stream = await downloadHighestQualityVideo(url, res)
+  }
 
   stream
     .on('error', (err) => {

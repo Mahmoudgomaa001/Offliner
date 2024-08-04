@@ -42,7 +42,7 @@ export async function downloadHighestQualityVideo(url, res) {
   return mergeStream
 }
 
-export function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
+function mergeAudioAndVideo(audioStream, videoStream, outputContainer) {
   const ffmpegProcess = cp.spawn(
     ffmpeg,
     [
@@ -121,14 +121,29 @@ export function selectFormat(formats = []) {
     }
   }
 
+  const highestAudioOnly = ytdl.chooseFormat(formats, {
+    quality: 'highestaudio',
+    filter: 'audioonly',
+  })
   if (!audioFormat || !videoFormat) {
     const format = ytdl.chooseFormat(formats, {
       quality: 'highestvideo',
       filter: (f) => f.hasAudio && f.hasVideo,
     })
 
-    return { format }
+    return { format, highestAudioOnly }
   }
 
-  return { audioFormat, videoFormat }
+  return { audioFormat, videoFormat, highestAudioOnly }
+}
+
+export async function downloadHighestQyalityAudio(url, res) {
+  const info = await ytdl.getInfo(url)
+
+  const format = selectFormat(info.formats).highestAudioOnly
+
+  res.header('Content-Type', format.mimeType.split(';')[0])
+  res.header('Content-Length', format.contentLength)
+
+  return ytdl(url, { format })
 }
