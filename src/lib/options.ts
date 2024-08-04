@@ -23,7 +23,6 @@ export async function getAllOptions(): Promise<Options> {
   const options = Object.fromEntries(
     keys
       .map((key, index) => [key, values[index]])
-      .filter(([_, value]) => !!value)
   )
 
   return {
