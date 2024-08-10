@@ -39,7 +39,7 @@ export const videoDownload = async (req, res) => {
 
       if (res.writableEnded) return
       req.destroy()
-      res.removeHeader('Content-Length')
+      !res.headersSent && res.removeHeader('Content-Length')
       res.status(err.statusCode || 500).end()
     })
     .pipe(res)

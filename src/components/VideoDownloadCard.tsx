@@ -102,45 +102,49 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         return reader.read().then(getPercentFetched)
       })
 
-      stream1.pipeTo(fileWriteStream).then(async () => {
-        await set(videoId, {
-          ...videoInfo.videoDetails,
-          downloadedAt: new Date(),
-          type: downloadable.type,
-        })
+      stream1
+        .pipeTo(fileWriteStream)
+        .then(async () => {
+          await set(videoId, {
+            ...videoInfo.videoDetails,
+            downloadedAt: new Date(),
+            type: downloadable.type,
+          })
 
-        toast({
-          title: `"${title}" Has been downloaded`,
-          action: (
-            <ToastAction
-              altText="Play video"
-              onClick={() => {
-                navigate(`/videos/${videoId}`)
-              }}
-            >
-              Play
-            </ToastAction>
-          ),
+          toast({
+            title: `"${title}" Has been downloaded`,
+            action: (
+              <ToastAction
+                altText="Play video"
+                onClick={() => {
+                  navigate(`/videos/${videoId}`)
+                }}
+              >
+                Play
+              </ToastAction>
+            ),
+          })
         })
-      })
+        .catch(onStreamError)
     } catch (error) {
       await fileWriteStream.close()
-      await removeVideo(videoId)
-      captureException(error)
-
-      toast({
-        title: 'An error occurred',
-        description: error.message || error.toString(),
-      })
+      onStreamError(error)
     } finally {
       setFetching(false)
     }
   }
 
-  function onStreamError(err: any) {
-    console.log(err)
+  async function onStreamError(err: any) {
+    setPercentFetched(0)
+    setFetching(false)
+
     captureException(err)
-    toast({ title: err.message || err.toString() })
+    await removeVideo(videoId)
+
+    toast({
+      title: 'An error occurred',
+      description: err.message || err.toString(),
+    })
   }
 
   return (
