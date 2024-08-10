@@ -144,7 +144,14 @@ async function handleBackgroundFetchSuccess(
   const records = await bgFetch.matchAll()
   const response = await records[0].responseReady
 
-  return response.body.pipeTo(fileWriteStream)
+  if (response.body) {
+    return response.body.pipeTo(fileWriteStream)
+  }
+
+  // response.body is null when the request fails midway through
+  await del(videoId)
+  await removeVideo(videoId)
+  event.updateUI({ title: 'Download Failed' })
 }
 
 async function handleBackgroundFetchFailure(
