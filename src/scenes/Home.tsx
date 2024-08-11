@@ -72,6 +72,7 @@ function Home() {
             <Input
               type="text"
               name="url"
+              autoComplete='off'
               required
               value={url}
               onChange={(e) => setUrl(e.target.value)}
