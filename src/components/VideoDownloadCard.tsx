@@ -84,7 +84,10 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       let bytesLengthReceived = 0
 
       if (!response || response.status > 200) {
-        onStreamError(`Failed to fetch. Status: ${response.status}`)
+        onStreamError(
+          `Failed to fetch. Status: ${response.status}`,
+          fileWriteStream
+        )
         return
       }
 
@@ -125,20 +128,20 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
             ),
           })
         })
-        .catch(onStreamError)
+        .catch((err) => onStreamError(err, fileWriteStream))
     } catch (error) {
-      await fileWriteStream.close()
-      onStreamError(error)
+      onStreamError(error, fileWriteStream)
     } finally {
       setFetching(false)
     }
   }
 
-  async function onStreamError(err: any) {
+  async function onStreamError(err: any, fs?: FileSystemWritableFileStream) {
     setPercentFetched(0)
     setFetching(false)
 
     captureException(err)
+    await fs.close()
     await removeVideo(videoId)
 
     toast({
