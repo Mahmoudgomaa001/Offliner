@@ -10,7 +10,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
-import { formatSeconds, humanFileSize } from '@/lib/utils'
+import { formatSeconds, humanFileSize, asyncTry } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
 import { useNavigate } from 'react-router-dom'
 import { getAudioSize, getVideoSize } from '@/lib/video'
@@ -141,7 +141,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     setFetching(false)
 
     captureException(err)
-    await fs.close()
+    await asyncTry(fs.close)
     await removeVideo(videoId)
 
     toast({

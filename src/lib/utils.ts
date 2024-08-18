@@ -42,3 +42,21 @@ export function humanFileSize(bytes: number) {
 
   return bytes.toFixed(1) + ' ' + units[u]
 }
+
+
+export async function asyncTry<T, S extends any[]>(
+  fn: (...args: S) => T,
+  ...args: S
+): Promise<[null, T] | [Error]> {
+  try {
+    const result = fn.apply(null, args)
+
+    if (result.then) {
+      return [null, await result]
+    }
+
+    return [null, result]
+  } catch (e) {
+    return [e]
+  }
+}
