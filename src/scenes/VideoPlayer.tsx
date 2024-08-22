@@ -18,7 +18,7 @@ export default function VideoPlayer() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAllVideos().then((videos) => {
+    getAllVideos({ type: 'video' }).then((videos) => {
       const videoIndex = videos.findIndex((v) => v.videoId === videoId)
       const previousVideos = videos.slice(0, videoIndex)
       const currentVideo = videos.slice(videoIndex, videoIndex + 1)
@@ -85,7 +85,8 @@ export default function VideoPlayer() {
     return () => URL.revokeObjectURL(src)
   }, [videoRef.current, videoDetails?.videoId])
 
-  if (loading) return  <Loader size={25} className="animate-spin block mx-auto my-12" />
+  if (loading)
+    return <Loader size={25} className="animate-spin block mx-auto my-12" />
 
   if (!videoDetails) return <p className="text-center">Video Not Found</p>
 

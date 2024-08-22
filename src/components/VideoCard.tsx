@@ -74,7 +74,7 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
       </Link>
       <h3 className="flex items-center">
         <Link
-          className="hover:underline text-base leading-none flex-grow mr-1 text-primary"
+          className="hover:underline text-base leading-none flex-grow mr-1 text-primary line-clamp-2"
           to={videoLink}
         >
           {video.title}

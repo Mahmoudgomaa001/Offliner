@@ -120,7 +120,11 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
               <ToastAction
                 altText="Play video"
                 onClick={() => {
-                  navigate(`/videos/${videoId}`)
+                  const url =
+                    downloadable.type === 'video'
+                      ? `/videos/${videoId}`
+                      : `/audio?id=${videoId}`
+                  navigate(url)
                 }}
               >
                 Play
