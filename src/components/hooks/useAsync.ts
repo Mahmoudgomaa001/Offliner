@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 
 export default function useAsync<T>(
-  callback: () => Promise<T>,
+  asyncFn: () => Promise<T>,
+  callback?: (asyncFnResult?: T) => void,
   dependencies = []
 ): { loading: boolean; error: any; value: T; refresh: () => void } {
   const [loading, setLoading] = useState(true)
@@ -12,8 +13,11 @@ export default function useAsync<T>(
     setLoading(true)
     setError(undefined)
     setValue(undefined)
-    callback()
-      .then(setValue)
+    asyncFn()
+      .then((value) => {
+        setValue(value)
+        callback?.(value)
+      })
       .catch(setError)
       .finally(() => setLoading(false))
   }, dependencies)

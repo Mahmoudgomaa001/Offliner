@@ -43,7 +43,6 @@ export function humanFileSize(bytes: number) {
   return bytes.toFixed(1) + ' ' + units[u]
 }
 
-
 export async function asyncTry<T, S extends any[]>(
   fn: (...args: S) => T,
   ...args: S
@@ -58,5 +57,17 @@ export async function asyncTry<T, S extends any[]>(
     return [null, result]
   } catch (e) {
     return [e]
+  }
+}
+
+export function reIndexCollection<T>(arr: T[], key: keyof T, value: string) {
+  const keyIndex = arr.findIndex((e) => e[key] === value)
+  const prevElements = arr.slice(0, keyIndex)
+  const currElement = arr[keyIndex]
+  const nextElements = arr.slice(keyIndex + 1)
+
+  return {
+    current: currElement,
+    arr: nextElements.concat(prevElements),
   }
 }
