@@ -1,10 +1,16 @@
 import fs from 'fs'
 import ytdl from '@distube/ytdl-core'
+import { captureException } from '@sentry/node'
 
-import { downloadHighestQualityVideo, downloadHighestQyalityAudio, selectFormat } from '../utils/video.js'
+import {
+  downloadHighestQualityVideo,
+  downloadHighestQyalityAudio,
+  selectFormat,
+} from '../utils/video.js'
 import { logger } from '../utils/logger.js'
+import { pipeline } from 'stream'
 
-const TMP_FILE = 'file'
+const TMP_FILE = 'file_' + crypto.randomUUID()
 
 export const videoInfo = async (req, res) => {
   const { url } = req.query
@@ -36,6 +42,7 @@ export const videoDownload = async (req, res) => {
   stream
     .on('error', (err) => {
       logger.error(err.toString())
+      captureException(err)
 
       if (res.writableEnded) return
       req.destroy()
@@ -48,30 +55,30 @@ export const videoDownload = async (req, res) => {
 export const videoDownloadFirst = async (req, res) => {
   const { url } = req.query
 
-  const writeStream = fs.createWriteStream(TMP_FILE)
-  writeStream.on('error', logger.error)
-
   const downloadStream = await downloadHighestQualityVideo(url, res)
 
-  downloadStream.pipe(writeStream)
+  const deleteTmpFile = () => fs.unlink(TMP_FILE, (err) => err && logger.error)
 
-  downloadStream.on('error', (err) => {
+  const handleError = (err) => {
     logger.error(err)
-    res.end()
-  })
+    captureException(err)
+    deleteTmpFile()
+    res.status(500).end()
+  }
 
-  downloadStream.on('end', () => {
-    const size = fs.statSync('file').size
+  pipeline(downloadStream, fs.createWriteStream(TMP_FILE), (err) => {
+    if (err) {
+      return handleError(err)
+    }
+
+    const size = fs.statSync(TMP_FILE).size
     res.header('Content-Length', size)
+    pipeline(fs.createReadStream(TMP_FILE), res, (err) => {
+      if (err) {
+        return handleError(err)
+      }
 
-    const deleteTmpFile = () => fs.unlink(TMP_FILE, logger.error)
-
-    fs.createReadStream(TMP_FILE)
-      .on('end', deleteTmpFile)
-      .on('error', (err) => {
-        logger.error(err)
-        deleteTmpFile()
-      })
-      .pipe(res)
+      deleteTmpFile()
+    })
   })
 }
