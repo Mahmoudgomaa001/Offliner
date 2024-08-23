@@ -71,8 +71,12 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       return
     }
 
-    // backgroundFetch not supported we do the normal download and write to disk
-    const fileWriteStream = await createWriteStream(videoId)
+    const fileWriteStream = await createWriteStream(videoId).catch((err) => err)
+
+    if (fileWriteStream instanceof TypeError) {
+      onStreamError('Creating local files is not supported!')
+      return
+    }
 
     setFetching(true)
     try {
@@ -145,11 +149,12 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     setFetching(false)
 
     captureException(err)
-    await asyncTry(fs.close)
+    await asyncTry(fs?.close)
     await removeVideo(videoId)
 
     toast({
       title: 'An error occurred',
+      variant: 'destructive',
       description: err.message || err.toString(),
     })
   }
