@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Loader } from 'lucide-react'
 import AudioCard from '@/components/AudioCard'
-import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
+import { getAllVideos } from '@/lib/FileSystemManager'
 import { sortCollectionByDate } from '@/lib/utils'
 
 import AudioPlayer from '@/components/AudioPlayer'
+import { Video } from '@/lib/api'
 
 export default function Music() {
   let [searchParams, setSearchParams] = useSearchParams()
-  const [audios, setAudios] = useState<localVideoDetails[]>(null)
-  const [currentAudio, setCurrentAudio] = useState<localVideoDetails>(null)
+  const [audios, setAudios] = useState<Video[]>(null)
+  const [currentAudio, setCurrentAudio] = useState<Video>(null)
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>(null)
   const [loading, setLoading] = useState(true)
   const audioId = searchParams.get('id')
@@ -80,7 +81,7 @@ export default function Music() {
         {audios.map((audio) => (
           <AudioCard
             key={audio.videoId}
-            imgSrc={audio.thumbnails.at(-1).url}
+            imgSrc={audio.thumbnail}
             title={audio.title}
             duration={+audio.lengthSeconds}
             onClick={() => selectAudio(audio.videoId)}

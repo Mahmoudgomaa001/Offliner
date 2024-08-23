@@ -1,5 +1,5 @@
+import { Author } from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
-import { Author } from '@distube/ytdl-core'
 
 type Props = {
   author: Author
@@ -9,16 +9,16 @@ export default function AuthorCard({ author }: Props) {
   return (
     <div className="flex gap-3">
       <img
-        src={author.thumbnails?.[1]?.url}
+        src={author.thumbnail}
         alt={author.user}
         className="rounded-full ring-2 ring-offset-2 ring-slate-300 h-14 w-14"
       />
 
       <div className="flex flex-col">
         <span className="font-medium text-slate-800">{author.name}</span>
-        {!!author.subscriber_count && (
+        {!!author.subscriberCount && (
           <span className="text-muted-foreground">
-            <b>{formatNumber(author.subscriber_count)}</b> subscribers
+            <b>{formatNumber(author.subscriberCount)}</b> subscribers
           </span>
         )}
       </div>

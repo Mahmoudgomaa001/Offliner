@@ -82,7 +82,7 @@ export default function Playlists() {
                   <Fragment key={v.videoId}>
                     <div className="flex gap-2">
                       <img
-                        src={v.thumbnails.at(-1).url}
+                        src={v.thumbnail}
                         alt={p.name}
                         className="h-12 w-12 rounded aspect-video object-cover"
                       />

@@ -1,7 +1,8 @@
-import { ExtendedVideoInfo } from './FileSystemManager'
+import { VideoInfoResponse } from './api'
 
-export function getVideoSize(videoInfo: ExtendedVideoInfo) {
-  const { selectedFormat } = videoInfo
+export function getVideoSize(
+  selectedFormat: VideoInfoResponse['selectedFormat']
+) {
   let size: number, accurate: boolean
 
   if ('format' in selectedFormat) {
@@ -20,8 +21,4 @@ export function getVideoSize(videoInfo: ExtendedVideoInfo) {
     size,
     accurate,
   }
-}
-
-export function getAudioSize(videoInfo: ExtendedVideoInfo) {
-  return +videoInfo.selectedFormat.highestAudioOnly.contentLength
 }

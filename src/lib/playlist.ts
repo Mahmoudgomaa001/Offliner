@@ -1,5 +1,6 @@
 import { DBSchema, openDB } from 'idb'
-import { getAllVideos, localVideoDetails } from './FileSystemManager'
+import { getAllVideos } from './FileSystemManager'
+import { Video } from './api'
 
 const storeName = 'playlists'
 
@@ -31,7 +32,7 @@ const dbPromise = openDB<PlaylistDb>('PlaylistsDb', 1, {
 export type Playlist = {
   id: string
   name: string
-  videos: localVideoDetails[]
+  videos: Video[]
   createdAt: Date
   lastPlayedId: string | undefined
 }

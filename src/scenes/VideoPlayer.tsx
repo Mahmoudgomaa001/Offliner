@@ -2,7 +2,8 @@ import AuthorCard from '@/components/AuthorCard'
 import VideoCard from '@/components/VideoCard'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
+import { getAllVideos } from '@/lib/FileSystemManager'
+import { Video } from '@/lib/api'
 import { getOption, setOption } from '@/lib/options'
 import { formatNumber } from '@/lib/utils'
 import { Loader } from 'lucide-react'
@@ -12,8 +13,8 @@ import { useParams } from 'react-router-dom'
 export default function VideoPlayer() {
   let { videoId } = useParams()
   const videoRef = useRef<ElementRef<'video'>>(null)
-  const [videoDetails, setVideoDetails] = useState<localVideoDetails>(null)
-  const [videos, setVideos] = useState<localVideoDetails[]>([])
+  const [videoDetails, setVideoDetails] = useState<Video>(null)
+  const [videos, setVideos] = useState<Video[]>([])
   const [autoPlay, setAutoPlay] = useState(false)
   const [loading, setLoading] = useState(true)
 

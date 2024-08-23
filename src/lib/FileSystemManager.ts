@@ -1,6 +1,6 @@
-import { MoreVideoDetails, videoFormat, videoInfo } from '@distube/ytdl-core'
 import { captureException } from '@sentry/react'
 import { del, get } from '@/lib/videoStore'
+import { Video } from './api'
 
 export async function createWriteStream(filename: string) {
   const root = await navigator.storage.getDirectory()
@@ -17,29 +17,10 @@ export async function createWriteStream(filename: string) {
   return writable
 }
 
-export type localVideoDetails = MoreVideoDetails & {
-  file: File
-  type: 'audio' | 'video'
-  downloadedAt: Date
-}
-
-export type ExtendedVideoInfo = videoInfo & {
-  selectedFormat:
-    | {
-        videoFormat: videoFormat
-        audioFormat: videoFormat
-        highestAudioOnly: videoFormat
-      }
-    | {
-        format: videoFormat
-        highestAudioOnly: videoFormat
-      }
-}
-
 type AllVideosProps = {
   videoIds?: string[]
   count?: number
-  type?: localVideoDetails['type']
+  type?: Video['type']
 }
 export async function getAllVideos({
   videoIds,
@@ -51,11 +32,11 @@ export async function getAllVideos({
     create: true,
   })
 
-  const videos: localVideoDetails[] = []
+  const videos: Video[] = []
 
   for await (let [name, handle] of youtubeFolder.entries()) {
     if (videoIds === undefined || (videoIds && videoIds.includes(name))) {
-      const info: localVideoDetails = await get(name)
+      const info: Video = await get(name)
       // @ts-expect-error
       const file = await handle.getFile()
 

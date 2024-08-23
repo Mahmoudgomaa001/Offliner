@@ -13,13 +13,13 @@ import {
 import VideoDownloadCard from '@/components/VideoDownloadCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ExtendedVideoInfo } from '@/lib/FileSystemManager'
 import RecentDownloads from '@/components/RecentDownloads'
+import { VideoInfoResponse } from '@/lib/api'
 
 function Home() {
   let [searchParams] = useSearchParams()
   const [url, setUrl] = useState(searchParams.get('description') || '')
-  const [videoDetails, setVideoDetails] = useState<ExtendedVideoInfo>()
+  const [videoDetails, setVideoDetails] = useState<VideoInfoResponse>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -72,7 +72,7 @@ function Home() {
             <Input
               type="text"
               name="url"
-              autoComplete='off'
+              autoComplete="off"
               required
               value={url}
               onChange={(e) => setUrl(e.target.value)}

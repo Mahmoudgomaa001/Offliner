@@ -1,7 +1,7 @@
 import AuthorCard from '@/components/AuthorCard'
 import VideoCard from '@/components/VideoCard'
 import useAsync from '@/components/hooks/useAsync'
-import { localVideoDetails } from '@/lib/FileSystemManager'
+import { Video } from '@/lib/api'
 import { getPlaylist, updatePlaylist } from '@/lib/playlist'
 import { formatNumber } from '@/lib/utils'
 import { Loader } from 'lucide-react'
@@ -11,8 +11,8 @@ import { useParams } from 'react-router-dom'
 export default function PlaylistPlayer() {
   const { id } = useParams()
   const { loading, value: playlist } = useAsync(() => getPlaylist(id))
-  const [currentVideo, setCurrentVideo] = useState<localVideoDetails>(null)
-  const [videos, setVideos] = useState<localVideoDetails[]>([])
+  const [currentVideo, setCurrentVideo] = useState<Video>(null)
+  const [videos, setVideos] = useState<Video[]>([])
   const [currentVideoSrc, setCurrentVideoSrc] = useState(null)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function PlaylistPlayer() {
 
     document.title = playlist.name + ' | Playlists'
 
-    let current: localVideoDetails
+    let current: Video
 
     if (playlist.lastPlayedId) {
       current = playlist.videos.find((v) => v.videoId === playlist.lastPlayedId)
@@ -59,14 +59,13 @@ export default function PlaylistPlayer() {
     playVideo(videos.find((v) => v.videoId === videoId))
   }
 
-  function playVideo(video: localVideoDetails) {
+  function playVideo(video: Video) {
     setCurrentVideo(video)
     updatePlaylist(playlist.id, { lastPlayedId: video.videoId })
   }
 
-  if (loading) {
-  if (loading) return  <Loader size={25} className="animate-spin block mx-auto my-12" />
-  }
+  if (loading)
+    return <Loader size={25} className="animate-spin block mx-auto my-12" />
 
   if (!playlist) {
     return <p className="text-center bold text-xl">Playlist Not Found</p>

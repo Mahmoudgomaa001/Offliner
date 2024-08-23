@@ -1,6 +1,6 @@
 import { Eye, GanttChart, Loader, RefreshCcw, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { localVideoDetails, removeVideo } from '@/lib/FileSystemManager'
+import { removeVideo } from '@/lib/FileSystemManager'
 import { formatNumber, formatSeconds, humanFileSize } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,9 +12,10 @@ import { useRef, useState } from 'react'
 import { toast } from './ui/use-toast'
 import { set } from '@/lib/videoStore'
 import { PopoverClose } from '@radix-ui/react-popover'
+import { Video } from '@/lib/api'
 
 type Props = {
-  videoInfo: localVideoDetails
+  videoInfo: Video
   onDelete?: (videoId: string) => void
   onClick?: (videoId: string) => void
 }
@@ -60,7 +61,7 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
             alt="Video thumbnail"
             className="aspect-video overflow-hidden rounded-lg object-cover w-full border border-primary"
             height={225}
-            src={video.thumbnails?.at(-1)?.url}
+            src={video.thumbnail}
             width={400}
           />
           <p className="absolute bottom-2 left-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">

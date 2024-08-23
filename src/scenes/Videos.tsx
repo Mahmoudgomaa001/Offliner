@@ -1,10 +1,11 @@
 import VideoCard from '@/components/VideoCard'
-import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
+import { Video } from '@/lib/api'
+import { getAllVideos } from '@/lib/FileSystemManager'
 import { Loader } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function Videos() {
-  const [videos, setVideos] = useState<localVideoDetails[]>([])
+  const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

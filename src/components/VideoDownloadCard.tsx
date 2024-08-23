@@ -2,31 +2,29 @@ import { useEffect, useState } from 'react'
 import { Download, Film, Music } from 'lucide-react'
 import { captureException } from '@sentry/react'
 
-import {
-  ExtendedVideoInfo,
-  createWriteStream,
-  removeVideo,
-} from '@/lib/FileSystemManager'
+import { createWriteStream, removeVideo } from '@/lib/FileSystemManager'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { formatSeconds, humanFileSize, asyncTry } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
 import { useNavigate } from 'react-router-dom'
-import { getAudioSize, getVideoSize } from '@/lib/video'
+import { getVideoSize } from '@/lib/video'
 import { getOption } from '@/lib/options'
+import { VideoInfoResponse } from '@/lib/api'
 
 type Props = {
-  videoInfo: ExtendedVideoInfo
+  videoInfo: VideoInfoResponse
 }
 export default function VideoDownloadCard({ videoInfo }: Props) {
   const { toast } = useToast()
   const navigate = useNavigate()
   const [fetching, setFetching] = useState(false)
   const [percentFetched, setPercentFetched] = useState(0)
-  const { thumbnails, title, video_url, lengthSeconds, videoId } =
-    videoInfo.videoDetails
-  const videoSize = getVideoSize(videoInfo)
+  const { thumbnail, title, videoUrl, lengthSeconds, videoId, selectedFormat } =
+    videoInfo
+  const audioSize = +selectedFormat.highestAudioOnly.contentLength
+  const videoSize = getVideoSize(videoInfo.selectedFormat)
 
   useEffect(() => {
     setPercentFetched(0)
@@ -38,7 +36,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     const useBgFetch = await getOption('useBgFetch')
     const downloadable = {
       type: audioOnly ? 'audio' : 'video',
-      size: audioOnly ? getAudioSize(videoInfo) : videoSize.size,
+      size: audioOnly ? audioSize : videoSize.size,
       accurate: audioOnly || videoSize.accurate,
     }
 
@@ -47,19 +45,19 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         .fetch(
           videoId,
           [
-            `/api/video/download?url=${video_url}}&audioOnly=${
+            `/api/video/download?url=${videoUrl}}&audioOnly=${
               audioOnly ? 'true' : ''
             }`,
           ],
           {
             title,
             downloadTotal: downloadable.accurate ? downloadable.size : null,
-            icons: [{ src: videoInfo.videoDetails.thumbnails?.at(-1)?.url }],
+            icons: [{ src: videoInfo.thumbnail }],
           }
         )
         .then(() => {
           set(videoId, {
-            ...videoInfo.videoDetails,
+            ...videoInfo,
             downloadedAt: new Date(),
             type: downloadable.type,
           })
@@ -81,7 +79,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     setFetching(true)
     try {
       const response = await fetch(
-        `/api/video/download?url=${video_url}&audioOnly=${
+        `/api/video/download?url=${videoUrl}&audioOnly=${
           audioOnly ? 'true' : ''
         }`
       )
@@ -113,7 +111,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
         .pipeTo(fileWriteStream)
         .then(async () => {
           await set(videoId, {
-            ...videoInfo.videoDetails,
+            ...videoInfo,
             downloadedAt: new Date(),
             type: downloadable.type,
           })
@@ -163,7 +161,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
     <div className="flex gap-4 flex-wrap md:flex-nowrap ">
       <div className="relative w-full md:w-2/5">
         <img
-          src={thumbnails.at(-1).url}
+          src={thumbnail}
           alt={title}
           className="rounded-lg object-cover w-full h-full ring-2 ring-accent-foreground"
         />
@@ -187,9 +185,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
           )}
           <p className="flex items-center gap-2">
             <Music size={18} />
-            {humanFileSize(
-              +videoInfo.selectedFormat.highestAudioOnly.contentLength
-            )}
+            {humanFileSize(audioSize)}
           </p>
         </div>
 

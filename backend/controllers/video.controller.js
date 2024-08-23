@@ -9,6 +9,10 @@ import {
 } from '../utils/video.js'
 import { logger } from '../utils/logger.js'
 import { pipeline } from 'stream'
+import {
+  formatVideoDetails,
+  formatVideoFormats,
+} from '../formatters/videoDetailsFormatter.js'
 
 const TMP_FILE = 'file_' + crypto.randomUUID()
 
@@ -21,7 +25,10 @@ export const videoInfo = async (req, res) => {
     const info = await ytdl.getInfo(url)
     const selectedFormat = selectFormat(info.formats)
 
-    res.send({ ...info, selectedFormat })
+    res.send({
+      ...formatVideoDetails(info.videoDetails),
+      selectedFormat: formatVideoFormats(selectedFormat),
+    })
   } catch (error) {
     res.status(500).send({ error: error.toString() })
   }
