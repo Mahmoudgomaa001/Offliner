@@ -71,3 +71,16 @@ export function reIndexCollection<T>(arr: T[], key: keyof T, value: string) {
     arr: nextElements.concat(prevElements),
   }
 }
+
+export function sortCollectionByDate<T extends Record<string, any>>(
+  arr: T[],
+  key: keyof T,
+  asc = true
+) {
+  return arr.toSorted((a, b) => {
+    const sort =
+      new Date(a[key]).getTime() > new Date(b[key]).getTime() ? 1 : -1
+
+    return asc ? sort : sort * -1
+  })
+}

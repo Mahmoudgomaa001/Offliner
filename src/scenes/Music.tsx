@@ -3,9 +3,11 @@ import { useSearchParams } from 'react-router-dom'
 import { Loader } from 'lucide-react'
 import AudioCard from '@/components/AudioCard'
 import { getAllVideos, localVideoDetails } from '@/lib/FileSystemManager'
-import { reIndexCollection } from '@/lib/utils'
+import { sortCollectionByDate } from '@/lib/utils'
 
-export default function Audios() {
+import AudioPlayer from '@/components/AudioPlayer'
+
+export default function Music() {
   let [searchParams, setSearchParams] = useSearchParams()
   const [audios, setAudios] = useState<localVideoDetails[]>(null)
   const [currentAudio, setCurrentAudio] = useState<localVideoDetails>(null)
@@ -16,29 +18,47 @@ export default function Audios() {
   useEffect(() => {
     getAllVideos({ type: 'audio' })
       .then((audios) => {
+        const sortedAudios = sortCollectionByDate(audios, 'downloadedAt', false)
+
         if (audioId) {
-          const { current, arr } = reIndexCollection(audios, 'videoId', audioId)
+          const current = sortedAudios.find(
+            (audio) => audio.videoId === audioId
+          )
 
           setCurrentAudio(current)
-          setAudios(arr)
+          setAudios(sortedAudios)
           setCurrentAudioSrc(URL.createObjectURL(current.file))
         } else {
-          setAudios(audios)
+          setAudios(sortedAudios)
         }
       })
       .finally(() => setLoading(false))
   }, [audioId])
 
   function handleAudioEnded() {
-    const index = audios.findIndex((audio) => audio.videoId === audioId)
-    const nextAudio = audios[(index + 1) % audios.length]
-
-    URL.revokeObjectURL(currentAudioSrc)
-    setSearchParams({ id: nextAudio.videoId })
+    playAdjacent('next')
   }
 
   function selectAudio(id: string) {
     setSearchParams({ id })
+  }
+
+  function playAdjacent(adjacent: 'next' | 'previous') {
+    const adjacentIndex = adjacent === 'next' ? 1 : -1
+
+    const index = audios.findIndex((audio) => audio.videoId === audioId)
+    const adjacentAudio = audios.at((index + adjacentIndex) % audios.length)
+
+    URL.revokeObjectURL(currentAudioSrc)
+    setSearchParams({ id: adjacentAudio.videoId })
+  }
+
+  function playPrevious() {
+    playAdjacent('previous')
+  }
+
+  function playNext() {
+    playAdjacent('next')
   }
 
   if (loading)
@@ -47,24 +67,24 @@ export default function Audios() {
   return (
     <main className="max-w-[var(--max-app-w)] mx-4 md:mx-auto">
       <div className="mb-8">
-        <audio
-          controls
-          autoPlay
+        <AudioPlayer
           src={currentAudioSrc}
           onEnded={handleAudioEnded}
-        ></audio>
-        <h1>{currentAudio?.title}</h1>
+          playNext={playNext}
+          playPrevious={playPrevious}
+          title={currentAudio?.title}
+        />
       </div>
 
-      <div className="flex flex-col space-y-3">
+      <div className="space-y-3 overflow-hidden">
         {audios.map((audio) => (
           <AudioCard
             key={audio.videoId}
-            id={audio.videoId}
             imgSrc={audio.thumbnails.at(-1).url}
             title={audio.title}
             duration={+audio.lengthSeconds}
-            onClick={selectAudio}
+            onClick={() => selectAudio(audio.videoId)}
+            selected={audio.videoId === audioId}
           />
         ))}
       </div>

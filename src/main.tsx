@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { init } from '@sentry/react'
 
 import Videos from '@/scenes/Videos'
-import AudioPlayer from '@/scenes/AudioPlayer'
+import Music from '@/scenes/Music'
 import Home from '@/scenes/Home'
 import Playlists from '@/scenes/Playlists'
 import PlaylistPlayer from '@/scenes/PlaylistPlayer'
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/audio',
-        Component: AudioPlayer,
+        Component: Music,
       },
     ],
   },

@@ -1,43 +1,35 @@
 import { formatSeconds } from '@/lib/utils'
 import { Button } from './ui/button'
+import clsx from 'clsx'
+import { CirclePlay } from 'lucide-react'
 
 type Props = {
-  id: string
   imgSrc: string
   title: string
   duration: number
-  onClick: (id: string) => void
+  onClick: () => void
+  selected?: boolean
 }
 
 export default function AudioCard({
-  id,
   imgSrc,
   title,
   duration,
+  selected,
   onClick,
 }: Props) {
   return (
-    <div className="flex gap-2 line-clamp-1">
+    <div
+      className={clsx('flex gap-2', {
+        'bg-secondary text-secondary-foreground rounded p-2': selected,
+      })}
+    >
       <Button
         variant="ghost"
-        onClick={() => onClick(id)}
-        className="w-16 h-10 p-0 relative group shrink-0"
+        onClick={onClick}
+        className="w-16 h-12 p-0 relative group shrink-0"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          className="absolute transition-opacity ease-in duration-400 opacity-0 group-hover:opacity-100"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <polygon points="10 8 16 12 10 16 10 8" />
-        </svg>
+        <CirclePlay />
         <img
           src={imgSrc}
           alt={title}
@@ -46,7 +38,13 @@ export default function AudioCard({
       </Button>
 
       <div className="flex flex-col">
-        <p>{title}</p>
+        <Button
+          className="line-clamp-1 p-0 h-auto"
+          variant="link"
+          onClick={onClick}
+        >
+          {title}
+        </Button>
         <p>{formatSeconds(duration)}</p>
       </div>
     </div>
