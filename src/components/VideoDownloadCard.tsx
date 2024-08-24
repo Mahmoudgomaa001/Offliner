@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { formatSeconds, humanFileSize, asyncTry } from '@/lib/utils'
 import { set } from '@/lib/videoStore'
 import { useNavigate } from 'react-router-dom'
-import { getVideoSize } from '@/lib/video'
+import { cacheMediaImages, getVideoSize } from '@/lib/video'
 import { getOption } from '@/lib/options'
 import { VideoInfoResponse } from '@/lib/api'
 
@@ -55,12 +55,14 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
             icons: [{ src: videoInfo.thumbnail }],
           }
         )
-        .then(() => {
-          set(videoId, {
+        .then(async () => {
+          const video = {
             ...videoInfo,
             downloadedAt: new Date(),
             type: downloadable.type,
-          })
+          }
+          await set(videoId, video)
+          await cacheMediaImages(video)
 
           toast({ title: 'Download has started in the background' })
         })
@@ -110,11 +112,14 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       stream1
         .pipeTo(fileWriteStream)
         .then(async () => {
-          await set(videoId, {
+          const video = {
             ...videoInfo,
             downloadedAt: new Date(),
             type: downloadable.type,
-          })
+          }
+          await set(videoId, video)
+          debugger
+          await cacheMediaImages(video)
 
           toast({
             title: `"${title}" Has been downloaded`,

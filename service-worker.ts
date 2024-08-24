@@ -3,13 +3,14 @@ import { del } from '@/lib/videoStore'
 
 declare const self: ServiceWorkerGlobalScope
 
-const cacheVersion = 6
+const cacheVersion = 7
 const cacheNames = {
   APP_SHELL: `cache-v${cacheVersion}`,
+  // used in the app for media data like images
   DYNAMIC: `dynamic-cache`,
 }
-const cacheableHosts = ['i.ytimg.com', 'yt3.ggpht.com']
-const cacheableDynamicAssets = ['__DYNAMIC_ASSETS__']
+const externalMediaHosts = ['i.ytimg.com', 'yt3.ggpht.com']
+const appAssets = ['__DYNAMIC_ASSETS__']
 const cacheableResources = [
   '/index.html',
   '/images/icons/icon-16.png',
@@ -22,15 +23,11 @@ const cacheableResources = [
 
 const CacheAppShell = async () => {
   const cache = await caches.open(cacheNames.APP_SHELL)
-  await cache.addAll(cacheableResources.concat(cacheableDynamicAssets))
+  await cache.addAll(cacheableResources.concat(appAssets))
 }
 
-const putInCache = async (
-  request: Request,
-  response: Response,
-  cacheName?: string
-) => {
-  const cache = await caches.open(cacheName || cacheNames.DYNAMIC)
+const putInCache = async (request: Request, response: Response) => {
+  const cache = await caches.open(cacheNames.APP_SHELL)
   await cache.put(request, response)
 }
 
@@ -40,25 +37,19 @@ const cacheFirst = async (request: Request) => {
     return responseFromCache
   }
 
-  const { hostname } = new URL(request.url)
-  if (cacheableHosts.includes(hostname)) {
-    const responseFromNetwork = await fetch(request.clone())
-
-    if (responseFromNetwork.ok) {
-      putInCache(request, responseFromNetwork.clone())
-      return responseFromNetwork
-    }
+  const responseFromNetwork = await fetch(request.clone())
+  if (responseFromNetwork.ok) {
+    putInCache(request, responseFromNetwork.clone())
+    return responseFromNetwork
   }
-
-  return await fetch(request)
 }
 
-const networkFirst = async (request: Request, cacheName?: string) => {
+const networkFirst = async (request: Request) => {
   try {
     const fetchedResponse = await fetch(request.url)
 
     if (fetchedResponse.ok) {
-      putInCache(request, fetchedResponse.clone(), cacheName)
+      putInCache(request, fetchedResponse.clone())
 
       return fetchedResponse
     }
@@ -81,7 +72,7 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const keys = await caches.keys()
       return keys.map(async (cache) => {
-        const cacheValues = Object.values(cacheNames)
+        const cacheValues: string[] = Object.values(cacheNames)
 
         if (!cacheValues.includes(cache)) {
           return await caches.delete(cache)
@@ -100,6 +91,11 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // these are cached when the user decides to download the media
+  if (externalMediaHosts.includes(hostname)) {
+    return
+  }
+
   // skip sentry error reporting
   if (hostname.endsWith('sentry.io')) {
     return
@@ -108,7 +104,7 @@ self.addEventListener('fetch', (event) => {
   // if requesting /[page].html return index.html so react can handle it
   if (event.request.mode === 'navigate') {
     const req = new Request('/index.html')
-    event.respondWith(networkFirst(req, cacheNames.APP_SHELL))
+    event.respondWith(networkFirst(req))
   } else {
     event.respondWith(cacheFirst(event.request))
   }

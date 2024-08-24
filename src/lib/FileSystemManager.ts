@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/react'
 import { del, get } from '@/lib/videoStore'
 import { Video } from './api'
+import { removeMediaCaches } from './video'
 
 export async function createWriteStream(filename: string) {
   const root = await navigator.storage.getDirectory()
@@ -40,6 +41,7 @@ export async function getAllVideos({
       // @ts-expect-error
       const file = await handle.getFile()
 
+      if (!info) continue
       if (file.size === 0) continue
       if (type === 'audio' && info.type !== 'audio') continue
       if (type === 'video' && info.type !== 'video' && !!info.type) continue
@@ -61,8 +63,10 @@ export async function getVideo(videoId: string) {
 export async function removeVideo(videoId: string) {
   const root = await navigator.storage.getDirectory()
   const youtubeFolder = await root.getDirectoryHandle('youtube')
+  const video = await getVideo(videoId)
 
   try {
+    video && (await removeMediaCaches(video))
     await youtubeFolder.removeEntry(videoId)
     await del(videoId)
   } catch (error) {
