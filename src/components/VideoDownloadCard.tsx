@@ -118,7 +118,6 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
             type: downloadable.type,
           }
           await set(videoId, video)
-          debugger
           await cacheMediaImages(video)
 
           toast({
