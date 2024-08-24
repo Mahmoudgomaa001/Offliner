@@ -7,6 +7,7 @@ import { sortCollectionByDate } from '@/lib/utils'
 
 import AudioPlayer from '@/components/AudioPlayer'
 import { Video } from '@/lib/api'
+import { getPlaylist } from '@/lib/playlist'
 
 export default function Music() {
   let [searchParams, setSearchParams] = useSearchParams()
@@ -15,9 +16,10 @@ export default function Music() {
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>(null)
   const [loading, setLoading] = useState(true)
   const audioId = searchParams.get('id')
+  const listId = searchParams.get('list')
 
   useEffect(() => {
-    getAllVideos({ type: 'audio' })
+    getVideos()
       .then((audios) => {
         const sortedAudios = sortCollectionByDate(audios, 'downloadedAt', false)
 
@@ -36,12 +38,19 @@ export default function Music() {
       .finally(() => setLoading(false))
   }, [audioId])
 
+  async function getVideos() {
+    if (listId) return getPlaylist(listId).then((p) => p.videos)
+
+    return getAllVideos({ type: 'audio' })
+  }
+
   function handleAudioEnded() {
     playAdjacent('next')
   }
 
   function selectAudio(id: string) {
-    setSearchParams({ id })
+    searchParams.set('id', id)
+    setSearchParams(searchParams)
   }
 
   function playAdjacent(adjacent: 'next' | 'previous') {
@@ -51,7 +60,7 @@ export default function Music() {
     const adjacentAudio = audios.at((index + adjacentIndex) % audios.length)
 
     URL.revokeObjectURL(currentAudioSrc)
-    setSearchParams({ id: adjacentAudio.videoId })
+    selectAudio(adjacentAudio.videoId)
   }
 
   function playPrevious() {

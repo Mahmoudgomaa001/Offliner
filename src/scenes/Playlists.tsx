@@ -27,6 +27,11 @@ export default function Playlists() {
       toast({ title: 'An error occurred!' })
     }
   }
+  function getPlaylistLink(playlist) {
+    if (playlist.type === 'audio') return `/audio?list=${playlist.id}`
+
+    return `/playlists/${playlist.id}`
+  }
 
   return (
     <main className="max-w-[var(--max-app-w)] mx-auto px-4 md:px-0">
@@ -48,7 +53,7 @@ export default function Playlists() {
           {playlists.map((p) => (
             <Collapsible key={p.id} className="space-y-2">
               <div className="flex items-center border mb-2 rounded p-2">
-                <Link to={`/playlists/${p.id}`} className="flex-grow">
+                <Link to={getPlaylistLink(p)} className="flex-grow">
                   {p.name}: ({p.videos.length})
                 </Link>
 
