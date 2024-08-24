@@ -13,6 +13,7 @@ interface PlaylistDb extends DBSchema {
       videoIds: string[]
       createdAt: Date
       lastPlayedId: string | undefined
+      type: 'video' | 'audio'
     }
     indexes: { 'by-name': string; 'by-date': Date }
   }
@@ -35,9 +36,14 @@ export type Playlist = {
   videos: Video[]
   createdAt: Date
   lastPlayedId: string | undefined
+  type: 'video' | 'audio'
 }
 
-export async function createPlaylist(name: string, videoIds: string[]) {
+export async function createPlaylist(
+  name: string,
+  videoIds: string[],
+  type: 'video' | 'audio'
+) {
   const db = await dbPromise
 
   const exists = await db.getFromIndex(storeName, 'by-name', name)
@@ -50,6 +56,7 @@ export async function createPlaylist(name: string, videoIds: string[]) {
     videoIds,
     createdAt: new Date(),
     lastPlayedId: undefined,
+    type,
   })
 }
 
@@ -83,6 +90,7 @@ export async function getPlaylist(id: string): Promise<Playlist> {
     videos: videos,
     createdAt: playlist.createdAt,
     lastPlayedId: playlist.lastPlayedId,
+    type: playlist.type,
   }
 }
 
@@ -100,6 +108,7 @@ export async function getAllPlaylists(): Promise<Playlist[]> {
       name: value.name,
       createdAt: value.createdAt,
       lastPlayedId: value.lastPlayedId,
+      type: value.type,
       videos: videos.filter((v) => value.videoIds.includes(v.videoId)),
     }))
     .sort((a, b) =>

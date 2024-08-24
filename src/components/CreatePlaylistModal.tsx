@@ -27,6 +27,7 @@ type Props = {
 type Video = {
   title: string
   videoId: string
+  type: 'video' | 'audio'
 }
 
 export default function CreatePlaylistModal({
@@ -38,6 +39,7 @@ export default function CreatePlaylistModal({
   const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState(playlist?.name || '')
+  const [type, setType] = useState<'video' | 'audio'>(playlist?.type)
   const [selectedIds, setSelectedIds] = useState(
     playlist?.videos?.map((v) => v.videoId) || []
   )
@@ -55,7 +57,7 @@ export default function CreatePlaylistModal({
       if (playlist) {
         await updatePlaylist(playlist.id, { name, videoIds: selectedIds })
       } else {
-        await createPlaylist(name, selectedIds)
+        await createPlaylist(name, selectedIds, type)
       }
 
       closeBtnRef.current?.click()
@@ -76,16 +78,26 @@ export default function CreatePlaylistModal({
   }
 
   useEffect(() => {
-    getAllVideos().then((videos) => {
-      setVideos(videos.map(({ title, videoId }) => ({ title, videoId })))
+    setLoading(true)
+    getAllVideos({ type }).then((videos) => {
+      setVideos(
+        videos.map(({ title, videoId, type }) => ({ title, videoId, type }))
+      )
 
       setLoading(false)
     })
-  }, [])
+  }, [type])
 
   function resetForm() {
     setName(playlist?.name || '')
     setSelectedIds(playlist?.videos?.map((v) => v.videoId) || [])
+  }
+
+  function handleTypeChange(e: any) {
+    // reset selected videos
+    setSelectedIds([])
+
+    setType(e.target.value as Video['type'])
   }
 
   return (
@@ -111,6 +123,22 @@ export default function CreatePlaylistModal({
                 value={name}
                 onChange={(e: any) => setName(e.target.value)}
               />
+            </div>
+
+            <div className="mt-5">
+              <Label htmlFor="type" className="mb-2 block">
+                Name
+              </Label>
+              <select
+                required
+                className="w-full ring-1 ring-input px-3 py-2 text-sm ring-offset-background h-10 rounded-md"
+                value={type}
+                onChange={handleTypeChange}
+              >
+                <option value="">Selected a type</option>
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+              </select>
             </div>
 
             <div>
