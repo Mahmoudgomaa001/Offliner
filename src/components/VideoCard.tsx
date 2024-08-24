@@ -22,7 +22,7 @@ type Props = {
 export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
   const closeBtn = useRef<HTMLButtonElement>()
   const [fetching, setFetching] = useState(false)
-  const [video, setVideo] = useState(videoInfo)
+  const [video, setVideo] = useState<Video>(videoInfo)
   const videoLink = onClick ? undefined : `/videos/${video.videoId}`
 
   const refreshVideo = async () => {
@@ -30,17 +30,18 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
 
     try {
       const response = await fetch(`/api/video/info?url=${video.videoId}`)
-      const data = await response.json()
+      const videoDetails = await response.json()
 
       if (response.ok) {
-        const updated = { ...videoInfo, ...data.videoDetails }
+        const { file, type, downloadedAt } = videoInfo
+        const updated = { ...videoDetails, file, type, downloadedAt }
 
         setVideo(updated)
         await set(videoInfo.videoId, updated)
         toast({ title: 'Video refreshed!' })
         closeBtn.current.click()
       } else {
-        toast({ title: data.error.toString() })
+        toast({ title: videoDetails.error.toString() })
       }
     } catch (error) {
       toast({ title: (error as Error).message })
