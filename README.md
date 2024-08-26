@@ -5,12 +5,13 @@ A progressive web app for storing Youtube video for later offline use.
 Features include:
 * You can install it like a native app
 * once installed you can share videos from youtube to the app and download them
-* Supports backgrounds fetch (enabled in the gloabl settings)
+* Supports backgrounds fetch (enabled in the global settings)
 * Uses FileSystem interface to store videos so you can manage them directly in the web app
 * the web app itself is offline first
 * you can download high quality videos
+* you can download high quality audio
 * you can view the videos and their info in youtube-like layout
-* you can create, update and delete playlists of downloaded videos
+* you can create, update and delete playlists of downloaded videos / audio
 
 
 The app is built with Typescript, react, and radix-ui  for the front-end and Node.js with Express for the backend
