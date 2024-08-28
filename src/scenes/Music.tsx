@@ -16,32 +16,35 @@ export default function Music() {
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>(null)
   const [loading, setLoading] = useState(true)
   const audioId = searchParams.get('id')
-  const listId = searchParams.get('list')
+  const playListId = searchParams.get('list')
 
   useEffect(() => {
-    getVideos()
-      .then((audios) => {
-        const sortedAudios = sortCollectionByDate(audios, 'downloadedAt', false)
+    getAudioList()
+      .then((audioList) => {
+        setAudios(audioList)
 
         if (audioId) {
-          const current = sortedAudios.find(
-            (audio) => audio.videoId === audioId
-          )
+          const current = audioList.find((audio) => audio.videoId === audioId)
 
           setCurrentAudio(current)
-          setAudios(sortedAudios)
           setCurrentAudioSrc(URL.createObjectURL(current.file))
-        } else {
-          setAudios(sortedAudios)
         }
       })
       .finally(() => setLoading(false))
   }, [audioId])
 
-  async function getVideos() {
-    if (listId) return getPlaylist(listId).then((p) => p.videos)
+  async function getAudioList() {
+    let listSource: Promise<Video[]>
+    if (playListId) {
+      listSource = getPlaylist(playListId).then((p) => p.videos)
+    } else {
+      listSource = getAllVideos({ type: 'audio' })
+    }
 
-    return getAllVideos({ type: 'audio' })
+    const audioList = await listSource
+    const sortedAudios = sortCollectionByDate(audioList, 'downloadedAt', false)
+
+    return sortedAudios
   }
 
   function handleAudioEnded() {
@@ -56,8 +59,8 @@ export default function Music() {
   function playAdjacent(adjacent: 'next' | 'previous') {
     const adjacentIndex = adjacent === 'next' ? 1 : -1
 
-    const index = audios.findIndex((audio) => audio.videoId === audioId)
-    const adjacentAudio = audios.at((index + adjacentIndex) % audios.length)
+    const current = audios.findIndex((audio) => audio.videoId === audioId)
+    const adjacentAudio = audios.at((current + adjacentIndex) % audios.length)
 
     URL.revokeObjectURL(currentAudioSrc)
     selectAudio(adjacentAudio.videoId)
@@ -69,6 +72,16 @@ export default function Music() {
 
   function playNext() {
     playAdjacent('next')
+  }
+
+  async function handleAudioDeleted(id: string) {
+    const isPlaying = id === currentAudio.videoId
+
+    if (isPlaying) playNext()
+    else {
+      const audioList = await getAudioList()
+      setAudios(audioList)
+    }
   }
 
   if (loading)
@@ -89,11 +102,13 @@ export default function Music() {
       <div className="space-y-3 overflow-hidden">
         {audios.map((audio) => (
           <AudioCard
+            id={audio.videoId}
             key={audio.videoId}
             imgSrc={audio.thumbnail}
             title={audio.title}
             duration={+audio.lengthSeconds}
             onClick={() => selectAudio(audio.videoId)}
+            onDelete={!playListId && handleAudioDeleted}
             selected={audio.videoId === audioId}
           />
         ))}

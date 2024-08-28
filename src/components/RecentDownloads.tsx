@@ -27,6 +27,7 @@ export default function RecentDownloads() {
         <Fragment key={v.videoId}>
           {v.type === 'audio' ? (
             <AudioCard
+              id={v.videoId}
               imgSrc={v.thumbnail}
               title={v.title}
               duration={v.lengthSeconds}
