@@ -34,6 +34,8 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
   async function downloadStream(audioOnly = false) {
     const swReg = await navigator.serviceWorker?.ready
     const useBgFetch = await getOption('useBgFetch')
+    const cookieString = await getOption('cookies')
+    const cookie = cookieString && encodeURIComponent(cookieString)
     const downloadable = {
       type: audioOnly ? 'audio' : 'video',
       size: audioOnly ? audioSize : videoSize.size,
@@ -47,7 +49,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
           [
             `/api/video/download?url=${videoUrl}}&audioOnly=${
               audioOnly ? 'true' : ''
-            }`,
+            }&cookie=${cookie}`,
           ],
           {
             title,
@@ -83,7 +85,7 @@ export default function VideoDownloadCard({ videoInfo }: Props) {
       const response = await fetch(
         `/api/video/download?url=${videoUrl}&audioOnly=${
           audioOnly ? 'true' : ''
-        }`
+        }&cookie=${cookie}`
       )
       let bytesLengthReceived = 0
 

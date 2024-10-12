@@ -3,6 +3,7 @@ import { openDB } from 'idb'
 const defaultOptions = {
   useBgFetch: true,
   autoPlay: true,
+  cookies: null
 }
 
 export type Options = typeof defaultOptions

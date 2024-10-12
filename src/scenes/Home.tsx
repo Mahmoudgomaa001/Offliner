@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import RecentDownloads from '@/components/RecentDownloads'
 import { VideoInfoResponse } from '@/lib/api'
+import { getOption } from '@/lib/options'
 
 function Home() {
   let [searchParams] = useSearchParams()
@@ -25,11 +26,15 @@ function Home() {
 
   const getInfo = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault()
+    const cookieString = await getOption('cookies')
+    const cookie = cookieString && encodeURIComponent(cookieString)
 
     setFetching(true)
 
     try {
-      const response = await fetch(`/api/video/info?url=${url}`)
+      const response = await fetch(
+        `/api/video/info?url=${url}&cookie=${cookie}`
+      )
       const data = await response.json()
 
       if (response.ok) {

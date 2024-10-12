@@ -14,6 +14,7 @@ import { Options, getAllOptions, setOption } from '@/lib/options'
 import { toast } from './ui/use-toast'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { Textarea } from './ui/textarea'
 
 type Props = {
   children: React.ReactNode
@@ -23,6 +24,7 @@ export default function SettingsModal({ children }: Props) {
   const [loading, setLoading] = useState(true)
   const [useBgFetch, setUseBgFetch] = useState(false)
   const [useAutoPlay, setUseAutoPlay] = useState(false)
+  const [cookies, setCookies] = useState(null)
   const closeBtnRef = useRef<HTMLButtonElement>()
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function SettingsModal({ children }: Props) {
       .then((options: Options) => {
         setUseBgFetch(options.useBgFetch)
         setUseAutoPlay(options.autoPlay)
+        setCookies(options.cookies)
       })
       .finally(() => setLoading(false))
   }, [])
@@ -38,6 +41,7 @@ export default function SettingsModal({ children }: Props) {
     Promise.all([
       setOption('useBgFetch', useBgFetch),
       setOption('autoPlay', useAutoPlay),
+      setOption('cookies', cookies),
     ])
       .then(() => {
         closeBtnRef.current.click()
@@ -85,6 +89,22 @@ export default function SettingsModal({ children }: Props) {
               />
               <p className="text-muted-foreground text-sm !ml-0 w-full">
                 Auto play next video after current video has ended
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center space-x-2">
+              <Label htmlFor="cookies" className="text-md flex-grow">
+                Cookies
+              </Label>
+              <Textarea
+                id="cookies"
+                placeholder="Paste your cookies here."
+                onChange={(e) => setCookies(e.target.value)}
+                value={cookies}
+                className="!ml-0"
+              />
+              <p className="text-muted-foreground text-sm !ml-0 w-full mt-2">
+                Use your own Youtube cookie
               </p>
             </div>
           </div>

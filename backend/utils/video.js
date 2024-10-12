@@ -1,7 +1,7 @@
 import cp from 'child_process'
 import ffmpeg from 'ffmpeg-static'
-import ytdl from '@distube/ytdl-core'
 import { logger } from './logger.js'
+import { chooseVideoFormat, downloadVideo, getVideoInfo } from './ytdl.js'
 
 export const QUALITY_ITAG_MAP_1080p = {
   mp4: {
@@ -15,7 +15,7 @@ export const QUALITY_ITAG_MAP_1080p = {
 }
 
 export async function downloadHighestQualityVideo(url, res) {
-  const info = await ytdl.getInfo(url)
+  const info = await getVideoInfo(url)
   const selectedFormat = selectFormat(info.formats)
 
   if (selectedFormat.format)
@@ -34,8 +34,8 @@ export async function downloadHighestQualityVideo(url, res) {
     )
   }
 
-  const audio = ytdl(url, { format: audioFormat })
-  const video = ytdl(url, { format: videoFormat })
+  const audio = downloadVideo(url, { format: audioFormat })
+  const video = downloadVideo(url, { format: videoFormat })
 
   const mergeStream = mergeAudioAndVideo(audio, video, videoFormat.container)
 
@@ -104,7 +104,7 @@ function downloadLowQualityVideo(format, url, res) {
   res.header('Content-Type', format.mimeType.split(';')[0])
   res.header('Content-Length', format.contentLength)
 
-  return ytdl(url, { format: format })
+  return downloadVideo(url, { format: format })
 }
 
 export function selectFormat(formats = []) {
@@ -121,12 +121,12 @@ export function selectFormat(formats = []) {
     }
   }
 
-  const highestAudioOnly = ytdl.chooseFormat(formats, {
+  const highestAudioOnly = chooseVideoFormat(formats, {
     quality: 'highestaudio',
     filter: 'audioonly',
   })
   if (!audioFormat || !videoFormat) {
-    const format = ytdl.chooseFormat(formats, {
+    const format = chooseVideoFormat(formats, {
       quality: 'highestvideo',
       filter: (f) => f.hasAudio && f.hasVideo,
     })
@@ -138,12 +138,12 @@ export function selectFormat(formats = []) {
 }
 
 export async function downloadHighestQyalityAudio(url, res) {
-  const info = await ytdl.getInfo(url)
+  const info = await getVideoInfo(url)
 
   const format = selectFormat(info.formats).highestAudioOnly
 
   res.header('Content-Type', format.mimeType.split(';')[0])
   res.header('Content-Length', format.contentLength)
 
-  return ytdl(url, { format })
+  return downloadVideo(url, { format })
 }

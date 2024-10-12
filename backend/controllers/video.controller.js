@@ -1,5 +1,4 @@
 import fs from 'fs'
-import ytdl from '@distube/ytdl-core'
 import { captureException } from '@sentry/node'
 
 import {
@@ -13,16 +12,19 @@ import {
   formatVideoDetails,
   formatVideoFormats,
 } from '../formatters/videoDetailsFormatter.js'
+import { getVideoInfo, setCookie } from '../utils/ytdl.js'
 
 const TMP_FILE = 'file_' + crypto.randomUUID()
 
 export const videoInfo = async (req, res) => {
-  const { url } = req.query
+  const { url, cookie } = req.query
+
+  if (cookie) setCookie(cookie.trim())
 
   if (!url) return res.send({ error: 'url query is required' })
 
   try {
-    const info = await ytdl.getInfo(url)
+    const info = await getVideoInfo(url)
     const selectedFormat = selectFormat(info.formats)
 
     res.send({
@@ -35,7 +37,9 @@ export const videoInfo = async (req, res) => {
 }
 
 export const videoDownload = async (req, res) => {
-  const { url, audioOnly } = req.query
+  const { url, audioOnly, cookie } = req.query
+
+  if (cookie) setCookie(cookie.trim())
 
   if (!url) return res.send({ error: 'url query is required' })
 
