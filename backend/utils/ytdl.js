@@ -1,6 +1,11 @@
 import ytdl from '@distube/ytdl-core'
 
 let cookie = null
+const agentOptions = {
+  headers: {
+    referer: 'https://www.youtube.com/',
+  },
+}
 
 /**
  *
@@ -29,7 +34,7 @@ export function setCookie(cookString) {
  * @returns {Promise<import('@distube/ytdl-core').videoInfo>}
  */
 export function getVideoInfo(url, options) {
-  const agent = cookie && ytdl.createAgent(cookie)
+  const agent = cookie && ytdl.createAgent(cookie, agentOptions)
 
   return ytdl.getInfo(url, { agent, ...options })
 }
@@ -41,7 +46,7 @@ export function getVideoInfo(url, options) {
  * @returns {Readable}
  */
 export function downloadVideo(url, options) {
-  const agent = cookie && ytdl.createAgent(cookie)
+  const agent = cookie && ytdl.createAgent(cookie, agentOptions)
 
   return ytdl(url, { agent, ...options })
 }

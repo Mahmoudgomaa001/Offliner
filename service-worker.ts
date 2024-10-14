@@ -3,7 +3,7 @@ import { del } from '@/lib/videoStore'
 
 declare const self: ServiceWorkerGlobalScope
 
-const cacheVersion = 7
+const cacheVersion = 8
 const cacheNames = {
   APP_SHELL: `cache-v${cacheVersion}`,
   // used in the app for media data like images
