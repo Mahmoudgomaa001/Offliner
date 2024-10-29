@@ -33,7 +33,7 @@ export function setCookie(cookString) {
  * @param {import('@distube/ytdl-core').getInfoOptions} options
  * @returns {Promise<import('@distube/ytdl-core').videoInfo>}
  */
-export function getVideoInfo(url, options) {
+export function getVideoInfo(url, options = {}) {
   const agent = cookie && ytdl.createAgent(cookie, agentOptions)
 
   return ytdl.getInfo(url, { agent, ...options })
@@ -45,7 +45,7 @@ export function getVideoInfo(url, options) {
  * @param {import('@distube/ytdl-core').downloadOptions} options
  * @returns {Readable}
  */
-export function downloadVideo(url, options) {
+export function downloadVideo(url, options = {}) {
   const agent = cookie && ytdl.createAgent(cookie, agentOptions)
 
   return ytdl(url, { agent, ...options })
@@ -57,6 +57,6 @@ export function downloadVideo(url, options) {
  * @param {import('@distube/ytdl-core').chooseFormatOptions} options
  * @returns
  */
-export function chooseVideoFormat(formats, options) {
+export function chooseVideoFormat(formats, options = {}) {
   return ytdl.chooseFormat(formats, options)
 }
