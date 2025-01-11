@@ -31,10 +31,10 @@
     http-response-object "^3.0.1"
     parse-cache-control "^1.0.1"
 
-"@distube/ytdl-core@^4.15.8":
-  version "4.15.8"
-  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.15.8.tgz#3516a1b80eba05d6c24ddd9df427ee9a816b9da4"
-  integrity sha512-yuQr8KDKuusXmaNNAw+stsRu6nmJUPy9hL6IgPm/8ei1zixfQFZpAIflXsqDrdXIaSp4hzTmQ1Z0KYhuqF2/JQ==
+"@distube/ytdl-core@4.15.4":
+  version "4.15.4"
+  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.15.4.tgz#abfd030d96cb4806cb4d96116dad6dee2be29dda"
+  integrity sha512-KpTgBNYXk7j/M/fCQAa8qIXISgNTliaV6mVZHTZ/h/8vSsrEEgNgSEATPtPY99cAuEAJkoVETKEy1Qq/9iZVgw==
   dependencies:
     http-cookie-agent "^6.0.8"
     https-proxy-agent "^7.0.6"
