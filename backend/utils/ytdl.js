@@ -14,17 +14,12 @@ const agentOptions = {
 export function setCookie(cookString) {
   if (!cookString.trim()) return
 
-  const parsed = cookString.split(';').map((cookie) => {
-    const [name, ...value] = cookie.split('=')
-    return {
-      name: name.trim(),
-      value: value.join('=').trim(),
-    }
-  })
+  const parsed = JSON.parse(cookString)
 
-  console.log({ parsed })
-
-  cookie = parsed
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    cookie = JSON.parse(cookString)
+    console.log({ cookie })
+  }
 }
 
 /**
