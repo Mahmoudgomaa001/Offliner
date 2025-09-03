@@ -26,6 +26,10 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
   const videoLink = onClick ? undefined : `/watch?v=${video.videoId}`
 
   const refreshVideo = async () => {
+    if (!('file' in videoInfo)) {
+      // Cannot refresh a video that hasn't been downloaded
+      return
+    }
     setFetching(true)
 
     try {
@@ -116,10 +120,10 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
             )}
             Refresh
           </Button>
-          {onDelete && (
+          {'file' in video && onDelete && (
             <Button
               onClick={async () => {
-                const id = video.videoId || video.file.name
+                const id = video.videoId || (video as Video).file.name
                 await removeVideo(id)
                 onDelete(id)
               }}

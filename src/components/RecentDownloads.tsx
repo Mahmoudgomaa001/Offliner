@@ -34,12 +34,7 @@ export default function RecentDownloads() {
               onClick={() => navigate(`/audio?id=${v.videoId}`)}
             />
           ) : (
-            <SmallVideoCard
-              imgSrc={v.thumbnail}
-              title={v.title}
-              lengthSeconds={v.lengthSeconds}
-              videoId={v.videoId}
-            />
+            <SmallVideoCard videoInfo={v} />
           )}
         </Fragment>
       ))}

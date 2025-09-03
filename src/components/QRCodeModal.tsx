@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { QRCode } from 'qrcode.react'
+import { QRCodeCanvas } from 'qrcode.react'
 
 type Props = {
   children: React.ReactNode
@@ -26,7 +26,7 @@ export default function QRCodeModal({ children }: Props) {
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center p-4">
-          <QRCode value={url} size={200} />
+          <QRCodeCanvas value={url} size={200} />
         </div>
       </DialogContent>
     </Dialog>
