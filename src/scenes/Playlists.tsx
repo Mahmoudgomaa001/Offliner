@@ -37,7 +37,7 @@ export default function Playlists() {
     <main className="max-w-[var(--max-app-w)] mx-auto px-4 md:px-0">
       <div className="flex justify-between items-center mb-5">
         <h1>Playlists</h1>
-        <CreatePlaylistModal onOpenChange={(_) => refresh()}>
+        <CreatePlaylistModal onOpenChange={() => refresh()}>
           <Button variant="default">Create</Button>
         </CreatePlaylistModal>
       </div>

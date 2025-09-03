@@ -40,7 +40,7 @@ export default function PlaylistPlayer() {
     const nextVideos = playlist.videos.slice(currentVideoIndex + 1)
 
     setVideos(nextVideos.concat(previousVideos))
-  }, [currentVideo])
+  }, [currentVideo, playlist])
 
   function handleVideoEnded() {
     playVideo(videos[0])

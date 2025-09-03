@@ -11,6 +11,7 @@ import PlaylistPlayer from '@/scenes/PlaylistPlayer'
 
 import './index.css'
 import Layout from './Layout'
+import Results from '@/scenes/Results'
 import VideoPlayer from '@/scenes/VideoPlayer'
 
 import { serviceWorkerFile } from 'virtual:vite-plugin-service-worker'
@@ -43,11 +44,19 @@ const router = createBrowserRouter([
         Component: PlaylistPlayer,
       },
       {
+        path: '/results',
+        Component: Results,
+      },
+      {
         path: '/videos',
         Component: Videos,
       },
       {
         path: '/videos/:videoId',
+        Component: VideoPlayer,
+      },
+      {
+        path: '/watch',
         Component: VideoPlayer,
       },
       {

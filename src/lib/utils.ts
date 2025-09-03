@@ -16,7 +16,7 @@ export function formatSeconds(seconds: number) {
 }
 
 export function formatNumber(number: number) {
-  let formatter = Intl.NumberFormat('en', { notation: 'compact' })
+  const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
   return formatter.format(number)
 }
@@ -48,7 +48,7 @@ export async function asyncTry<T, S extends any[]>(
   ...args: S
 ): Promise<[null, T] | [Error]> {
   try {
-    const result = fn.apply(null, args)
+    const result = fn(...args)
 
     if (result.then) {
       return [null, await result]

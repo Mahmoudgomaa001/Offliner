@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   EyeOff,
   FolderLock,
@@ -18,37 +18,40 @@ import { VideoInfoResponse } from '@/lib/api'
 import { getOption } from '@/lib/options'
 
 function Home() {
-  let [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [url, setUrl] = useState(searchParams.get('description') || '')
   const [videoDetails, setVideoDetails] = useState<VideoInfoResponse>()
   const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  const getInfo = async (e?: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault()
-    const cookieString = await getOption('cookies')
-    const cookie = cookieString && encodeURIComponent(cookieString)
+  const getInfo = useCallback(
+    async (e?: React.FormEvent<HTMLFormElement>) => {
+      e?.preventDefault()
+      const cookieString = await getOption('cookies')
+      const cookie = cookieString && encodeURIComponent(cookieString)
 
-    setFetching(true)
+      setFetching(true)
 
-    try {
-      const response = await fetch(
-        `/api/video/info?url=${url}&cookie=${cookie}`
-      )
-      const data = await response.json()
+      try {
+        const response = await fetch(
+          `/api/video/info?url=${url}&cookie=${cookie}`
+        )
+        const data = await response.json()
 
-      if (response.ok) {
-        setVideoDetails(data)
-        setError(null)
-      } else {
-        setError(data.error.toString())
+        if (response.ok) {
+          setVideoDetails(data)
+          setError(null)
+        } else {
+          setError(data.error.toString())
+        }
+      } catch (error) {
+        setError((error as Error).message)
+      } finally {
+        setFetching(false)
       }
-    } catch (error) {
-      setError((error as Error).message)
-    } finally {
-      setFetching(false)
-    }
-  }
+    },
+    [url]
+  )
 
   useEffect(() => {
     // description comes from being a share_target. it contains the url
@@ -57,7 +60,7 @@ function Home() {
     if (description) {
       getInfo()
     }
-  }, [])
+  }, [getInfo, searchParams])
 
   return (
     <main>
@@ -121,7 +124,7 @@ function Home() {
 
       <div className="max-w-[var(--max-app-w)] md:mx-auto px-4 md:px-0">
         <h3 className="text-primary text-2xl md:text-3xl text-center">
-          Features You'll Love
+          Features You&apos;ll Love
         </h3>
         <p className="text-primary text-center mt-1 mb-8">
           Offliner strive to make the whole experience as smooth as possible.
@@ -134,7 +137,7 @@ function Home() {
               <p>Simple & straightforward</p>
             </div>
             <p className="text-muted-foreground leading-5">
-              Past the URL and download the video. That's it. Now, you are all
+              Past the URL and download the video. That&apos;s it. Now, you are all
               set. You can watch any time you want.
             </p>
           </div>
@@ -145,7 +148,7 @@ function Home() {
               <p>No ads or tracking</p>
             </div>
             <p className="text-muted-foreground leading-5">
-              We don't deliver ads to use tracking software. Your viewing
+              We don&apos;t deliver ads to use tracking software. Your viewing
               activity is not collected or shared with any one not even us.
             </p>
           </div>
@@ -155,7 +158,7 @@ function Home() {
               <p>Download in the background</p>
             </div>
             <p className="text-muted-foreground leading-5">
-              Downloads are launched in the background. So you don't have to
+              Downloads are launched in the background. So you don&apos;t have to
               worry about closing the website.
             </p>
           </div>
