@@ -48,20 +48,26 @@ export default function Navbar({ className }: Props) {
         <div className="flex items-center gap-3">
           <NavLink
             to="/audio"
-            className={({ isActive }) => (isActive ? 'border-b-2 border-secondary' : '')}
+            className={({ isActive }) =>
+              isActive ? 'border-b-2 border-secondary' : ''
+            }
           >
             Music
           </NavLink>
           <NavLink
             to="/videos"
-            className={({ isActive }) => (isActive ? 'border-b-2 border-secondary' : '')}
+            className={({ isActive }) =>
+              isActive ? 'border-b-2 border-secondary' : ''
+            }
           >
             Videos
           </NavLink>
 
           <NavLink
             to="/playlists"
-            className={({ isActive }) => (isActive ? 'border-b-2 border-secondary' : '')}
+            className={({ isActive }) =>
+              isActive ? 'border-b-2 border-secondary' : ''
+            }
           >
             Playlists
           </NavLink>

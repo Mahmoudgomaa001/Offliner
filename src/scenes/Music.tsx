@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Loader } from 'lucide-react'
 import AudioCard from '@/components/AudioCard'
@@ -10,27 +10,13 @@ import { Video } from '@/lib/api'
 import { getPlaylist } from '@/lib/playlist'
 
 export default function Music() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  let [searchParams, setSearchParams] = useSearchParams()
   const [audios, setAudios] = useState<Video[]>(null)
   const [currentAudio, setCurrentAudio] = useState<Video>(null)
   const [currentAudioSrc, setCurrentAudioSrc] = useState<string>(null)
   const [loading, setLoading] = useState(true)
   const audioId = searchParams.get('id')
   const playListId = searchParams.get('list')
-
-  const getAudioList = useCallback(async () => {
-    let listSource: Promise<Video[]>
-    if (playListId) {
-      listSource = getPlaylist(playListId).then((p) => p.videos)
-    } else {
-      listSource = getAllVideos({ type: 'audio' })
-    }
-
-    const audioList = await listSource
-    const sortedAudios = sortCollectionByDate(audioList, 'downloadedAt', false)
-
-    return sortedAudios
-  }, [playListId])
 
   useEffect(() => {
     getAudioList()
@@ -45,7 +31,21 @@ export default function Music() {
         }
       })
       .finally(() => setLoading(false))
-  }, [audioId, getAudioList])
+  }, [audioId])
+
+  async function getAudioList() {
+    let listSource: Promise<Video[]>
+    if (playListId) {
+      listSource = getPlaylist(playListId).then((p) => p.videos)
+    } else {
+      listSource = getAllVideos({ type: 'audio' })
+    }
+
+    const audioList = await listSource
+    const sortedAudios = sortCollectionByDate(audioList, 'downloadedAt', false)
+
+    return sortedAudios
+  }
 
   function handleAudioEnded() {
     playAdjacent('next')

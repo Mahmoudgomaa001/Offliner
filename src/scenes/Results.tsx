@@ -48,11 +48,7 @@ export default function Results() {
       ) : (
         <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {results.map((video) => (
-            <VideoCard
-              videoInfo={video}
-              key={video.videoId}
-              onDelete={() => {}} // This needs to be handled differently for non-cached videos
-            />
+            <VideoCard videoInfo={video} key={video.videoId} />
           ))}
         </div>
       )}

@@ -108,6 +108,23 @@ function downloadLowQualityVideo(format, url, res) {
 }
 
 export function selectFormat(formats = []) {
+  // Always prefer a pre-merged format for reliability
+  const format = chooseVideoFormat(formats, {
+    quality: 'highestvideo',
+    filter: (f) => f.hasAudio && f.hasVideo,
+  })
+
+  const highestAudioOnly = chooseVideoFormat(formats, {
+    quality: 'highestaudio',
+    filter: 'audioonly',
+  })
+
+  // If a pre-merged format is found, use it.
+  if (format) {
+    return { format, highestAudioOnly }
+  }
+
+  // Otherwise, fallback to finding separate streams for high quality.
   let audioFormat, videoFormat
   for (const container in QUALITY_ITAG_MAP_1080p) {
     const { audio, video } = QUALITY_ITAG_MAP_1080p[container]
@@ -119,19 +136,6 @@ export function selectFormat(formats = []) {
     } catch (error) {
       logger.error('error choosing format', error)
     }
-  }
-
-  const highestAudioOnly = chooseVideoFormat(formats, {
-    quality: 'highestaudio',
-    filter: 'audioonly',
-  })
-  if (!audioFormat || !videoFormat) {
-    const format = chooseVideoFormat(formats, {
-      quality: 'highestvideo',
-      filter: (f) => f.hasAudio && f.hasVideo,
-    })
-
-    return { format, highestAudioOnly }
   }
 
   return { audioFormat, videoFormat, highestAudioOnly }

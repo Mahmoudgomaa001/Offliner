@@ -40,11 +40,10 @@ export default function VideoPlayer() {
           throw new Error(info.error)
         }
         setVideoDetails(info)
-        // TODO: Implement fetching real recommended videos
-        // For now, using placeholder data for UI development
+        // Fetch recommended videos based on author
         fetch(`/api/search?q=${info.author.name}`)
-          .then(res => res.json())
-          .then(results => setRecommendedVideos(results.slice(0, 10)))
+          .then((res) => res.json())
+          .then((results) => setRecommendedVideos(results.slice(0, 10)))
       })
       .catch((err) => {
         console.error('Failed to fetch video info', err)

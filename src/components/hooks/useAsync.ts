@@ -20,7 +20,7 @@ export default function useAsync<T>(
       })
       .catch(setError)
       .finally(() => setLoading(false))
-  }, [...dependencies, asyncFn, callback])
+  }, dependencies)
 
   useEffect(() => {
     callbackMemoized()

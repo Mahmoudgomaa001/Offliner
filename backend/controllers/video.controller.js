@@ -14,7 +14,7 @@ import {
   formatVideoDetails,
   formatVideoFormats,
 } from '../formatters/videoDetailsFormatter.js'
-import { getVideoInfo, setCookie } from '../utils/ytdl.js'
+import { getVideoInfo, setCookie, downloadVideo } from '../utils/ytdl.js'
 
 const TMP_FILE = 'file_' + crypto.randomUUID()
 

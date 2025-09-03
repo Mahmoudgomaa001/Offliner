@@ -35,7 +35,7 @@ export async function getAllVideos({
 
   const videos: Video[] = []
 
-  for await (const [name, handle] of youtubeFolder.entries()) {
+  for await (let [name, handle] of youtubeFolder.entries()) {
     if (videoIds === undefined || (videoIds && videoIds.includes(name))) {
       const info: Video = await get(name)
       // @ts-expect-error
