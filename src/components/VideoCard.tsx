@@ -12,18 +12,18 @@ import { useRef, useState } from 'react'
 import { toast } from './ui/use-toast'
 import { set } from '@/lib/videoStore'
 import { PopoverClose } from '@radix-ui/react-popover'
-import { Video } from '@/lib/api'
+import { Video, VideoInfoResponse } from '@/lib/api'
 
 type Props = {
-  videoInfo: Video
+  videoInfo: Video | VideoInfoResponse
   onDelete?: (videoId: string) => void
   onClick?: (videoId: string) => void
 }
 export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
   const closeBtn = useRef<HTMLButtonElement>()
   const [fetching, setFetching] = useState(false)
-  const [video, setVideo] = useState<Video>(videoInfo)
-  const videoLink = onClick ? undefined : `/videos/${video.videoId}`
+  const [video, setVideo] = useState<Video | VideoInfoResponse>(videoInfo)
+  const videoLink = onClick ? undefined : `/watch?v=${video.videoId}`
 
   const refreshVideo = async () => {
     setFetching(true)
@@ -65,9 +65,11 @@ export default function VideoCard({ videoInfo, onDelete, onClick }: Props) {
             src={video.thumbnail}
             width={400}
           />
-          <p className="absolute bottom-2 left-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">
-            {humanFileSize(video.file.size)}
-          </p>
+          {'file' in video && (
+            <p className="absolute bottom-2 left-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">
+              {humanFileSize((video as Video).file.size)}
+            </p>
+          )}
           <p className="absolute bottom-2 right-2 bg-[#00000099] text-white rounded p-1 leading-none text-sm">
             {formatSeconds(+video.lengthSeconds)}
           </p>

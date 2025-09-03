@@ -50,7 +50,7 @@ export async function asyncTry<T, S extends any[]>(
   try {
     const result = fn(...args)
 
-    if (result.then) {
+    if (result && typeof (result as any).then === 'function') {
       return [null, await result]
     }
 
